@@ -1,0 +1,28 @@
+
+
+validation:
+  enabled: true
+  createUnit:
+    numberRegex: ^(?=.{3,20}$)[a-zA-Z0-9]+$
+    nameRegex: ^(?=.{3,20}$)[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*$
+
+
+batch:
+  workers:
+    poolSize: 5
+
+
+filters:
+  defaults:
+    listUnit:
+      pageNum: 0
+      itemsPerPage: 20
+      sortCode: 0
+
+
+spring:
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
