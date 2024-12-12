@@ -1,9 +1,13 @@
 package com.hydroyura.prodms.archive.server.db.repository;
 
 import com.hydroyura.prodms.archive.server.db.EntityManagerProvider;
+import com.hydroyura.prodms.archive.server.db.entity.Unit;
+import com.hydroyura.prodms.archive.server.db.entity.UnitHist;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import java.util.List;
 import java.util.Map;
+import org.hibernate.cfg.Configuration;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +16,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 class UnitRepositoryImplTest {
 
@@ -35,19 +40,47 @@ class UnitRepositoryImplTest {
     }
 
 
+
+    private final UnitRepository unitRepository;
     private final EntityManagerProvider entityManagerProvider;
 
-
     UnitRepositoryImplTest() {
-        // TODO uatoclosable ????
-        var entitymanagerFactory = Persistence.createEntityManagerFactory("test-archive-db");
-        this.entityManagerProvider = new EntityManagerProvider(entitymanagerFactory);
+        this.entityManagerProvider = new EntityManagerProvider(init());
+        this.unitRepository = new UnitRepositoryImpl(this.entityManagerProvider);
+    }
+
+    private EntityManagerFactory init() {
+        Configuration configuration = new Configuration();
+        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+        configuration.setProperty("hibernate.show_sql", "true");
+        configuration.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
+        configuration.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5435/test-archive");
+        configuration.setProperty("hibernate.connection.username", "test-pg-user");
+        configuration.setProperty("hibernate.connection.password", "test-pg-pwd");
+
+        // Добавьте ваши сущности
+        configuration.addAnnotatedClass(Unit.class);
+        configuration.addAnnotatedClass(UnitHist.class);
+
+        // Создание EntityManagerFactory
+        return configuration.buildSessionFactory().unwrap(EntityManagerFactory.class);
     }
 
 
     @Test
-    void test1() {
-        int a = 1;
+    void create_OK() {
+        var unit = new Unit();
+        unit.setName("NAME");
+        unit.setNumber("NUMBER");
+        unit.setStatus(1);
+        unit.setType(1);
+        unit.setIsActive(true);
+        unit.setAdditional("additional");
+        unit.setCreatedAt(10000L);
+        unit.setUpdatedAt(10000L);
+        unit.setVersion(1);
+        assertDoesNotThrow(() -> unitRepository.create(unit));
     }
 
 }
