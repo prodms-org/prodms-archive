@@ -5,6 +5,7 @@ import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.entity.UnitHist;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.cfg.Configuration;
@@ -69,7 +70,7 @@ class UnitRepositoryImplTest {
 
 
     @Test
-    void create_OK() {
+    void create_OK() throws Exception {
         var unit = new Unit();
         unit.setName("NAME");
         unit.setNumber("NUMBER");
@@ -80,7 +81,17 @@ class UnitRepositoryImplTest {
         unit.setCreatedAt(10000L);
         unit.setUpdatedAt(10000L);
         unit.setVersion(1);
-        assertDoesNotThrow(() -> unitRepository.create(unit));
+        entityManagerProvider.getTransaction().begin();
+        unitRepository.create(unit);
+        entityManagerProvider.getTransaction().commit();
+        var result = TEST_DB_CONTAINER.execInContainer(
+            "bash", "-c",
+                "echo 'SELECT COUNT(*) from units WHERE number='NUMBER';' | psql -U test-pg-user -d test-archive")
+            .getStdout().split("\\n")[2].replace(" ", "");
+        assertEquals(1, Integer.valueOf(result));
     }
+
+
+//
 
 }
