@@ -10,14 +10,12 @@ import java.util.Optional;
 public interface UnitRepository {
 
     void create(Unit unit);
-    void create(List<Unit> units);
+
 
     Optional<Unit> get(String number);
 
     void delete(String number);
 
     Collection<Unit> list(ListUnitsReq filter);
-
-    void patch();
 
 }

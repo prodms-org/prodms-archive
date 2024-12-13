@@ -146,16 +146,70 @@ class UnitRepositoryImplTest {
         assertThrows(UnitDeleteException.class, () -> unitRepository.delete(UNIT_NUMBER_1));
     }
 
+    @Test
+    void list_pagination5() {
+        //TODO: create impl
+    }
+
+    @Test
+    void list_sortUpNumberAndPaginationFirst5() {
+        //TODO: create impl
+    }
+
+    @Test
+    void list_sortUpNumberAndPaginationSecond5() {
+        //TODO: create impl
+    }
+
+    @Test
+    void list_filterByNumber() {
+        //TODO: create impl
+    }
+
+    @Test
+    void list_filterByName() {
+        //TODO: create impl
+    }
+
+    @Test
+    void list_filterByType() {
+        //TODO: create impl
+    }
+
+    @Test
+    void list_filterByStatus() {
+        //TODO: create impl
+    }
+
+    @Test
+    void list_filterByCreatedAt() {
+        //TODO: create impl
+    }
+
+    @Test
+    void list_filterByAll() {
+        //TODO: create impl
+    }
+
+
+
+
+
+
 
 
 
     private Unit generateUnit(String number, String name, Integer status, Integer type) {
-        var unit = new Unit();
         var now = Instant.now().getEpochSecond();
+        return generateUnit(number, name, status, type, now, now);
+    }
+
+    private Unit generateUnit(String number, String name, Integer status, Integer type, Long createdAt, Long updatedAt) {
+        var unit = new Unit();
         unit.setName(name);
         unit.setNumber(number);
-        unit.setCreatedAt(now);
-        unit.setUpdatedAt(now);
+        unit.setCreatedAt(createdAt);
+        unit.setUpdatedAt(updatedAt);
         unit.setVersion(1);
         unit.setStatus(status);
         unit.setType(type);

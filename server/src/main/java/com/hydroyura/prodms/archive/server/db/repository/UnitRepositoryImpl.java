@@ -40,11 +40,6 @@ public class UnitRepositoryImpl implements UnitRepository {
     }
 
     @Override
-    public void create(List<Unit> units) {
-
-    }
-
-    @Override
     public Optional<Unit> get(String number) {
         try {
             CriteriaBuilder criteriaBuilder = entityManagerProvider.getEntityManager().getCriteriaBuilder();
@@ -144,11 +139,6 @@ public class UnitRepositoryImpl implements UnitRepository {
             .setFirstResult(filter.getPageNum() * filter.getItemsPerPage())
             .setMaxResults(filter.getItemsPerPage())
             .getResultList();
-    }
-
-    @Override
-    public void patch() {
-
     }
 
 
