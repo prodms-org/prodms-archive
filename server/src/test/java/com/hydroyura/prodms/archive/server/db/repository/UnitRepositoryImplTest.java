@@ -3,21 +3,28 @@ package com.hydroyura.prodms.archive.server.db.repository;
 import com.hydroyura.prodms.archive.server.db.EntityManagerProvider;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.entity.UnitHist;
+import com.hydroyura.prodms.archive.server.exception.model.db.UnitDeleteException;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import org.hibernate.cfg.Configuration;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_NUMBER_1;
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_NUMBER_1;
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_NUMBER_1_NOT_ACTIVE;
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_SELECT_COUNT_OF_ACTIVE_BY_NUMBER;
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_TRUNCATE;
 import static org.junit.jupiter.api.Assertions.*;
+
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_NAME_1;
 
 class UnitRepositoryImplTest {
 
@@ -40,15 +47,19 @@ class UnitRepositoryImplTest {
         TEST_DB_CONTAINER.close();
     }
 
-
-
     private final UnitRepository unitRepository;
     private final EntityManagerProvider entityManagerProvider;
+
+    @AfterEach
+    void clearTable() throws Exception {
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_TRUNCATE);
+    }
 
     UnitRepositoryImplTest() {
         this.entityManagerProvider = new EntityManagerProvider(init());
         this.unitRepository = new UnitRepositoryImpl(this.entityManagerProvider);
     }
+
 
     private EntityManagerFactory init() {
         Configuration configuration = new Configuration();
@@ -71,27 +82,86 @@ class UnitRepositoryImplTest {
 
     @Test
     void create_OK() throws Exception {
-        var unit = new Unit();
-        unit.setName("NAME");
-        unit.setNumber("NUMBER");
-        unit.setStatus(1);
-        unit.setType(1);
-        unit.setIsActive(true);
-        unit.setAdditional("additional");
-        unit.setCreatedAt(10000L);
-        unit.setUpdatedAt(10000L);
-        unit.setVersion(1);
         entityManagerProvider.getTransaction().begin();
-        unitRepository.create(unit);
+        unitRepository.create(generateUnit(UNIT_NUMBER_1, UNIT_NAME_1, 1, 1));
         entityManagerProvider.getTransaction().commit();
         var result = TEST_DB_CONTAINER.execInContainer(
-            "bash", "-c",
-                "echo 'SELECT COUNT(*) from units WHERE number='NUMBER';' | psql -U test-pg-user -d test-archive")
+                "bash",
+                "-c",
+                UNIT_SQL_SELECT_COUNT_OF_ACTIVE_BY_NUMBER.formatted(UNIT_NUMBER_1))
             .getStdout().split("\\n")[2].replace(" ", "");
         assertEquals(1, Integer.valueOf(result));
     }
 
+    @Test
+    void create_throwEntityExistsException() {
+        entityManagerProvider.getTransaction().begin();
+        unitRepository.create(generateUnit(UNIT_NUMBER_1, UNIT_NAME_1, 1, 1));
+        entityManagerProvider.getTransaction().commit();
+        assertThrows(
+            EntityExistsException.class,
+            () -> unitRepository.create(generateUnit(UNIT_NUMBER_1, UNIT_NAME_1, 1, 1))
+        );
+    }
 
-//
+    @Test
+    void get_OK() throws Exception {
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
+        assertTrue(unitRepository.get(UNIT_NUMBER_1).isPresent());
+    }
+
+    @Test
+    void get_NOT_FOUND() {
+        assertFalse(unitRepository.get(UNIT_NUMBER_1).isPresent());
+    }
+
+    @Test
+    void get_NOT_ACTIVE() throws Exception{
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1_NOT_ACTIVE);
+        assertFalse(unitRepository.get(UNIT_NUMBER_1).isPresent());
+    }
+
+    @Test
+    void delete_OK() throws Exception {
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
+        entityManagerProvider.getTransaction().begin();
+        unitRepository.delete(UNIT_NUMBER_1);
+        entityManagerProvider.getTransaction().commit();
+        var result = TEST_DB_CONTAINER.execInContainer(
+                "bash",
+                "-c",
+                UNIT_SQL_SELECT_COUNT_OF_ACTIVE_BY_NUMBER.formatted(UNIT_NUMBER_1))
+            .getStdout().split("\\n")[2].replace(" ", "");
+        assertEquals(0, Integer.valueOf(result));
+    }
+
+    @Test
+    void delete_notExistent() {
+        assertThrows(UnitDeleteException.class, () -> unitRepository.delete(UNIT_NUMBER_1));
+    }
+
+    @Test
+    void delete_notActive() throws Exception {
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1_NOT_ACTIVE);
+        assertThrows(UnitDeleteException.class, () -> unitRepository.delete(UNIT_NUMBER_1));
+    }
+
+
+
+
+    private Unit generateUnit(String number, String name, Integer status, Integer type) {
+        var unit = new Unit();
+        var now = Instant.now().getEpochSecond();
+        unit.setName(name);
+        unit.setNumber(number);
+        unit.setCreatedAt(now);
+        unit.setUpdatedAt(now);
+        unit.setVersion(1);
+        unit.setStatus(status);
+        unit.setType(type);
+        unit.setIsActive(true);
+        unit.setAdditional("some additional data");
+        return unit;
+    }
 
 }
