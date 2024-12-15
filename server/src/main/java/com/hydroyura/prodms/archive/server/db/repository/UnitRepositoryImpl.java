@@ -116,7 +116,7 @@ public class UnitRepositoryImpl implements UnitRepository {
                 .stream()
                 .map(EnumUtils::getUnitStatusCodeByString)
                 .toList();
-            andPredicates.add(criteriaBuilder.in(root.get("status").in(values)));
+            andPredicates.add(root.get("status").in(values));
         }
 
         if (!filter.getTypeIn().isEmpty()) {
@@ -124,7 +124,7 @@ public class UnitRepositoryImpl implements UnitRepository {
                 .stream()
                 .map(EnumUtils::getUnitTypeCodeByString)
                 .toList();
-            andPredicates.add(criteriaBuilder.in(root.get("type").in(values)));
+            andPredicates.add(root.get("type").in(values));
         }
 
         var array = andPredicates.toArray(Predicate[]::new);

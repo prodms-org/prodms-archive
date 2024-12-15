@@ -2,9 +2,12 @@ package com.hydroyura.prodms.archive.client.model.req;
 
 
 import java.util.Collections;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Collection;
+import lombok.NoArgsConstructor;
 
 @Data
 public class ListUnitsReq {
