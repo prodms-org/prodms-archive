@@ -23,6 +23,10 @@ public class RepositoryTestUtils {
 
     public static final String UNIT_SQL_SELECT_COUNT_OF_ACTIVE_BY_NUMBER =
         "echo \"SELECT COUNT(number) from units WHERE units.number = '%s' AND units.is_active = 'true';\" | psql -U test-pg-user -d test-archive";
+
+    public static final String UNIT_SQL_SELECT_ACTIVE_BY_NUMBER =
+        "echo \"SELECT * from units WHERE units.number = '%s' AND units.is_active = 'true';\" | psql -U test-pg-user -d test-archive";
+
     public static final String UNIT_SQL_TRUNCATE =
         "echo \"TRUNCATE TABLE units;\" | psql -U test-pg-user -d test-archive";
 

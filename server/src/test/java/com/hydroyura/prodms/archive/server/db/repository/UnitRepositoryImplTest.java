@@ -13,6 +13,7 @@ import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUt
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_NUMBER_NAME_TYPE_PARAMS;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_NUMBER_NAME_TYPE_STATUS_PARAMS;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_NUMBER_PARAM;
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_SELECT_ACTIVE_BY_NUMBER;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_SELECT_COUNT_OF_ACTIVE_BY_NUMBER;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_TRUNCATE;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.generateUnit;
@@ -27,8 +28,10 @@ import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.entity.UnitHist;
 import com.hydroyura.prodms.archive.server.db.order.UnitOrder;
 import com.hydroyura.prodms.archive.server.exception.model.db.UnitDeleteException;
+import com.hydroyura.prodms.archive.server.exception.model.db.UnitPatchException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManagerFactory;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -413,7 +416,54 @@ class UnitRepositoryImplTest {
             result.size() == 3
                 && result.containsAll(List.of(1000L, 2000L, 3000L))
         );
+    }
 
+    @Test
+    void patch_OK() throws Exception {
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
+        Unit patchedUnit = new Unit();
+        patchedUnit.setNumber("NUMBER_1");
+        patchedUnit.setName("NAME_222");
+        patchedUnit.setStatus(1);
+        patchedUnit.setAdditional("some_additional");
+
+        entityManagerProvider.getTransaction().begin();
+        unitRepository.patch(patchedUnit);
+        entityManagerProvider.getTransaction().commit();
+
+        var result = TEST_DB_CONTAINER.execInContainer(
+            "bash",
+            "-c",
+            UNIT_SQL_SELECT_ACTIVE_BY_NUMBER.formatted("NUMBER_1")
+        );
+
+        int nameColIdx = Arrays
+            .stream(result.getStdout().split("\\n")[0].replace(" ", "").split("\\|"))
+            .toList()
+            .indexOf("name");
+        String nameValueAfterPatch = Arrays
+            .stream(result.getStdout().split("\\n")[2].replace(" ", "").split("\\|"))
+            .toList()
+            .get(nameColIdx);
+        assertEquals("NAME_222", nameValueAfterPatch);
+    }
+
+    @Test
+    void patch_notExist() {
+        Unit patchedUnit = new Unit();
+        patchedUnit.setNumber(UNIT_NUMBER_1);
+        assertThrows(UnitPatchException.class, () -> unitRepository.patch(patchedUnit));
+    }
+
+    @Test
+    void patch_nothingToPatch() throws Exception {
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
+        Unit patchedUnit = new Unit();
+        patchedUnit.setNumber("NUMBER_1");
+        patchedUnit.setName("NAME_1");
+        patchedUnit.setStatus(1);
+        patchedUnit.setAdditional("some_additional");
+        assertThrows(UnitPatchException.class, () -> unitRepository.patch(patchedUnit));
     }
 
 }

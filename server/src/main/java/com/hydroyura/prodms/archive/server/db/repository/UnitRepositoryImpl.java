@@ -1,14 +1,17 @@
 package com.hydroyura.prodms.archive.server.db.repository;
 
 import static com.hydroyura.prodms.archive.server.SharedConstants.EX_MSG_UNIT_DELETE;
+import static com.hydroyura.prodms.archive.server.SharedConstants.EX_MSG_UNIT_PATCH;
 import static com.hydroyura.prodms.archive.server.SharedConstants.LOG_MSG_UNIT_NOT_FOUND;
 
 import com.hydroyura.prodms.archive.client.model.enums.EnumUtils;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
+import com.hydroyura.prodms.archive.client.model.req.PatchUnitReq;
 import com.hydroyura.prodms.archive.server.db.EntityManagerProvider;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.order.UnitOrder;
 import com.hydroyura.prodms.archive.server.exception.model.db.UnitDeleteException;
+import com.hydroyura.prodms.archive.server.exception.model.db.UnitPatchException;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -141,11 +144,34 @@ public class UnitRepositoryImpl implements UnitRepository {
             .getResultList();
     }
 
+    // TODO: make this code prettier
+    @Override
+    public void patch(Unit unit) {
+        var currentUnit = get(unit.getNumber());
+        if (currentUnit.isPresent()) {
+            boolean isNameNew = currentUnit.get().getName().equals(unit.getName());
+            boolean isStatusNew = currentUnit.get().getStatus().equals(unit.getStatus());
+            boolean isAdditionalNew = currentUnit.get().getAdditional().equals(unit.getAdditional());
+
+            if (!isNameNew || !isStatusNew || !isAdditionalNew) {
+                Long now = Instant.now().getEpochSecond();
+                Unit pachedUnit = currentUnit.get();
+                pachedUnit.setUpdatedAt(now);
+                pachedUnit.setVersion(pachedUnit.getVersion() + 1);
+                pachedUnit.setName(unit.getName());
+                pachedUnit.setStatus(unit.getStatus());
+                pachedUnit.setAdditional(unit.getAdditional());
+                entityManagerProvider.getEntityManager().merge(pachedUnit);
+                return;
+            }
+        }
+        throw new UnitPatchException(EX_MSG_UNIT_PATCH.formatted(unit.getNumber()));
+    }
+
 
     private <R> Optional<R> wrapField(Supplier<R> supplier) {
         return Optional.ofNullable(supplier.get());
     }
-
 
     private static UnitOrder getUnitOrderByCode(Integer code) {
         // TODO: custom error

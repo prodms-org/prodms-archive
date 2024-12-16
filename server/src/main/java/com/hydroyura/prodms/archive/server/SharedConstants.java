@@ -9,4 +9,6 @@ public class SharedConstants {
 
     public static final String EX_MSG_UNIT_DELETE =
         "Can not delete unit with number = [%s]. Possible reasons are unit not exist or already deleted.";
+    public static final String EX_MSG_UNIT_PATCH =
+        "Can not patch unit with number = [%s]. Possible reasons are unit not exist or nothing to change.";
 }
