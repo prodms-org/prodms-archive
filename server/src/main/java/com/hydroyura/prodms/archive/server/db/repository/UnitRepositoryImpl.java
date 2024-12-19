@@ -6,7 +6,6 @@ import static com.hydroyura.prodms.archive.server.SharedConstants.LOG_MSG_UNIT_N
 
 import com.hydroyura.prodms.archive.client.model.enums.EnumUtils;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
-import com.hydroyura.prodms.archive.client.model.req.PatchUnitReq;
 import com.hydroyura.prodms.archive.server.db.EntityManagerProvider;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.order.UnitOrder;
@@ -15,13 +14,13 @@ import com.hydroyura.prodms.archive.server.exception.model.db.UnitPatchException
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
@@ -48,12 +47,13 @@ public class UnitRepositoryImpl implements UnitRepository {
             CriteriaBuilder criteriaBuilder = entityManagerProvider.getEntityManager().getCriteriaBuilder();
             CriteriaQuery<Unit> criteriaQuery = criteriaBuilder.createQuery(Unit.class);
             Root<Unit> root = criteriaQuery.from(Unit.class);
-
+            root.fetch("history", JoinType.LEFT);
             Collection<Predicate> andPredicates = new ArrayList<>();
             andPredicates.add(criteriaBuilder.equal(root.get("number"), number));
             andPredicates.add(criteriaBuilder.equal(root.get("isActive"), Boolean.TRUE));
 
             criteriaQuery.where(criteriaBuilder.and(andPredicates.toArray(Predicate[]::new)));
+
             var unit = entityManagerProvider.getEntityManager().createQuery(criteriaQuery).getSingleResult();
             return Optional.of(unit);
         } catch (NoResultException ex) {

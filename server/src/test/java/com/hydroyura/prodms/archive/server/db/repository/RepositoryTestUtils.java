@@ -28,7 +28,7 @@ public class RepositoryTestUtils {
         "echo \"SELECT * from units WHERE units.number = '%s' AND units.is_active = 'true';\" | psql -U test-pg-user -d test-archive";
 
     public static final String UNIT_SQL_TRUNCATE =
-        "echo \"TRUNCATE TABLE units;\" | psql -U test-pg-user -d test-archive";
+        "echo \"TRUNCATE TABLE units CASCADE;\" | psql -U test-pg-user -d test-archive";
 
     public static final String UNIT_SQL_CREATE_NUMBER_1 = """
         echo "
@@ -96,7 +96,7 @@ public class RepositoryTestUtils {
         unit.setStatus(status);
         unit.setType(type);
         unit.setIsActive(true);
-        unit.setAdditional("some additional data");
+        unit.setAdditional("some_additional");
         return unit;
     }
 

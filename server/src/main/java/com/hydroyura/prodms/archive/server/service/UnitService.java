@@ -13,6 +13,7 @@ import com.hydroyura.prodms.archive.server.db.repository.UnitRepository;
 import com.hydroyura.prodms.archive.server.mapper.CreateUnitReqToUnitMapper;
 import com.hydroyura.prodms.archive.server.mapper.UnitToGetUnitResMapper;
 import com.hydroyura.prodms.archive.server.mapper.UnitToUnitHistMapper;
+import com.hydroyura.prodms.archive.server.mapper.UnitToUnitResMapper;
 import jakarta.persistence.EntityTransaction;
 import java.time.Instant;
 import java.util.Collection;
@@ -30,15 +31,16 @@ public class UnitService {
     private final UnitHistRepository unitHistRepository;
     private final EntityManagerProvider entityManagerProvider;
     private final UnitToGetUnitResMapper unitToGetUnitResMapper;
+    private final UnitToUnitResMapper unitToUnitResMapper;
 
 
     public ListUnitsRes list(ListUnitsReq req) {
         EntityTransaction transaction = entityManagerProvider.getTransaction();
         try {
             transaction.begin();
-            Collection<GetUnitRes> units = unitRepository.list(req)
+            Collection<ListUnitsRes.UnitRes> units = unitRepository.list(req)
                 .stream()
-                .map(unitToGetUnitResMapper::toDestination)
+                .map(unitToUnitResMapper::toDestination)
                 .toList();
             transaction.commit();
             return ListUnitsRes.builder()
