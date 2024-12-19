@@ -38,4 +38,8 @@ public class Unit {
     @JoinColumn(name = "number")
     private Collection<UnitHist> history;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unit_number")
+    private Collection<Rate> useIn;
+
 }
