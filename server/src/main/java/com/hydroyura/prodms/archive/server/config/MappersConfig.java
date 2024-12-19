@@ -6,6 +6,8 @@ import com.hydroyura.prodms.archive.server.mapper.UnitToGetUnitResMapper;
 import com.hydroyura.prodms.archive.server.mapper.UnitToGetUnitResMapperImpl;
 import com.hydroyura.prodms.archive.server.mapper.UnitToUnitHistMapper;
 import com.hydroyura.prodms.archive.server.mapper.UnitToUnitHistMapperImpl;
+import com.hydroyura.prodms.archive.server.mapper.UnitToUnitResMapper;
+import com.hydroyura.prodms.archive.server.mapper.UnitToUnitResMapperImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +27,11 @@ public class MappersConfig {
     @Bean
     UnitToGetUnitResMapper unitToUnitDtoMapper() {
         return new UnitToGetUnitResMapperImpl();
+    }
+
+    @Bean
+    UnitToUnitResMapper unitToUnitDtoMapper2() {
+        return new UnitToUnitResMapperImpl();
     }
 
 }
