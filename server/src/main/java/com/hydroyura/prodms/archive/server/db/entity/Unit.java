@@ -35,11 +35,10 @@ public class Unit {
     private Boolean isActive;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "number")
+    //@JoinColumn(name = "number")
     private Collection<UnitHist> history;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_number")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "assembly")
     private Collection<Rate> useIn;
 
 }

@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.server.db.EntityManagerProvider;
+import com.hydroyura.prodms.archive.server.db.entity.Rate;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.entity.UnitHist;
 import com.hydroyura.prodms.archive.server.db.order.UnitOrder;
@@ -92,6 +93,7 @@ class UnitRepositoryImplTest {
         // Добавьте ваши сущности
         configuration.addAnnotatedClass(Unit.class);
         configuration.addAnnotatedClass(UnitHist.class);
+        configuration.addAnnotatedClass(Rate.class);
 
         // Создание EntityManagerFactory
         return configuration.buildSessionFactory().unwrap(EntityManagerFactory.class);

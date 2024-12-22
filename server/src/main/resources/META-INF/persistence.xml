@@ -11,6 +11,7 @@
 
         <class>com.hydroyura.prodms.archive.server.db.entity.Unit</class>
         <class>com.hydroyura.prodms.archive.server.db.entity.UnitHist</class>
+        <class>com.hydroyura.prodms.archive.server.db.entity.Rate</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

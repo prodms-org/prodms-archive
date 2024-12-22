@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class RateId {
 
-    private String unitNumber;
-    private String assemblyNumber;
+    private String unit;
+    private String assembly;
 
 }

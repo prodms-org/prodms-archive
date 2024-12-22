@@ -6,6 +6,7 @@ import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUt
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.hydroyura.prodms.archive.server.db.EntityManagerProvider;
+import com.hydroyura.prodms.archive.server.db.entity.Rate;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.entity.UnitHist;
 import jakarta.persistence.EntityManagerFactory;
@@ -66,6 +67,7 @@ class UnitHistRepositoryImplTest {
         // Добавьте ваши сущности
         configuration.addAnnotatedClass(Unit.class);
         configuration.addAnnotatedClass(UnitHist.class);
+        configuration.addAnnotatedClass(Rate.class);
 
         // Создание EntityManagerFactory
         return configuration.buildSessionFactory().unwrap(EntityManagerFactory.class);
