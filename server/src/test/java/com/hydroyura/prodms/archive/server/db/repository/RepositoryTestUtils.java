@@ -27,6 +27,9 @@ public class RepositoryTestUtils {
     public static final String UNIT_SQL_SELECT_ACTIVE_BY_NUMBER =
         "echo \"SELECT * from units WHERE units.number = '%s' AND units.is_active = 'true';\" | psql -U test-pg-user -d test-archive";
 
+    public static final String RATE_SQL_SELECT_BY_NUMBERS =
+        "echo \"SELECT * from rates WHERE rates.unit_number = '%s' AND rates.is_active = 'true' AND rates.assembly_number = '%s';\" | psql -U test-pg-user -d test-archive";
+
     public static final String UNIT_SQL_TRUNCATE =
         "echo \"TRUNCATE TABLE units CASCADE;\" | psql -U test-pg-user -d test-archive";
 
@@ -34,6 +37,12 @@ public class RepositoryTestUtils {
         echo "
             INSERT INTO units (name, number, created_at, updated_at, version, status, type, is_active, additional) \s
             VALUES ('NAME_1', 'NUMBER_1', 100, 100, 1, 1, 1, true, 'some_additional');" | psql -U test-pg-user -d test-archive
+   \s""";
+
+    public static final String UNIT_SQL_CREATE_ASSEMBLY_WITH_NUMBER = """
+        echo "
+            INSERT INTO units (name, number, created_at, updated_at, version, status, type, is_active, additional) \s
+            VALUES ('NAME_1', '%s', 100, 100, 1, 2, 1, true, 'some_additional');" | psql -U test-pg-user -d test-archive
    \s""";
 
     public static final String UNIT_SQL_CREATE_NUMBER_1_NOT_ACTIVE = """
