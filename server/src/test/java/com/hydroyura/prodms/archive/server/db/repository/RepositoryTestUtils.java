@@ -85,9 +85,11 @@ public class RepositoryTestUtils {
     public static final String UNIT_HIST_SQL_SELECT_BY_NUMBER_AND_VERSION =
         "echo \"SELECT COUNT(number) from units_history WHERE units_history.number = '%s' AND units_history.version = %s;\" | psql -U test-pg-user -d test-archive";
 
-
-
-
+    public static final String UNIT_SQL_CREATE_RATE_BY_ASSEMBLY_NUM_AND_UNIT_NUMBER = """
+        echo "
+            INSERT INTO rates (assembly_number, unit_number, rate, version, created_at, updated_at, is_active) \s
+            VALUES ('%s', '%s', 2, 1, 100, 100, true);" | psql -U test-pg-user -d test-archive
+   \s""";
 
 
     public static Unit generateUnit(String number, String name, Integer status, Integer type) {

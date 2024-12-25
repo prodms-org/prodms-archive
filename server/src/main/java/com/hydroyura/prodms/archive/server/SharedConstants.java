@@ -15,6 +15,8 @@ public class SharedConstants {
         "Can not patch unit with number = [%s]. Possible reasons are unit not exist or nothing to change.";
     public static final String EX_MSG_RATE_FIND_UNIT =
         "Can not find unit with number = [%s] for populating field [%s] in Rate.class.";
+    public static final String EX_MSG_RATE_NOT_EXIST =
+        "Can not find rate with assembly_number = [%s] and unit_number = [%s]";
     public static final String EX_MSG_RATE_PATCH_COUNT =
         "Can not patch rate with unit number = [%s] and assembly number = [%s]. Current count = [%s] new count = [%s].";
 }

@@ -5,6 +5,7 @@ import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUt
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_NUMBER_2;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_ASSEMBLY_WITH_NUMBER;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_NUMBER_1;
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_RATE_BY_ASSEMBLY_NUM_AND_UNIT_NUMBER;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_TRUNCATE;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,6 +16,8 @@ import com.hydroyura.prodms.archive.server.db.entity.RateId;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.entity.UnitHist;
 import com.hydroyura.prodms.archive.server.exception.model.db.RateFindUnitException;
+import com.hydroyura.prodms.archive.server.exception.model.db.RateNotExistException;
+import com.hydroyura.prodms.archive.server.exception.model.db.RatePatchException;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.List;
 import org.hibernate.cfg.Configuration;
@@ -91,11 +94,7 @@ class RateRepositoryImplTest {
     @Test
     void create_OK() throws Exception {
         TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
-        TEST_DB_CONTAINER.execInContainer(
-            "bash",
-            "-c",
-            UNIT_SQL_CREATE_ASSEMBLY_WITH_NUMBER.formatted(UNIT_NUMBER_2)
-        );
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_ASSEMBLY_WITH_NUMBER.formatted(UNIT_NUMBER_2));
         var id = new RateId();
         id.setAssembly(UNIT_NUMBER_2);
         id.setUnit(UNIT_NUMBER_1);
@@ -115,8 +114,54 @@ class RateRepositoryImplTest {
     }
 
     @Test
-    void patch() {
+    void patchCount_OK() throws Exception {
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_ASSEMBLY_WITH_NUMBER.formatted(UNIT_NUMBER_2));
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_RATE_BY_ASSEMBLY_NUM_AND_UNIT_NUMBER.formatted(UNIT_NUMBER_2, UNIT_NUMBER_1));
 
+        var rateId = new RateId();
+        rateId.setAssembly(UNIT_NUMBER_2);
+        rateId.setUnit(UNIT_NUMBER_1);
+        int newCount = 999;
+
+        entityManagerProvider.getTransaction().begin();
+        rateRepository.patchCount(rateId, newCount);
+        entityManagerProvider.getTransaction().commit();
+
+        var result = TEST_DB_CONTAINER.execInContainer(
+                "bash",
+                "-c",
+                RATE_SQL_SELECT_BY_NUMBERS.formatted(UNIT_NUMBER_1, UNIT_NUMBER_2))
+            .getStdout()
+            .split("\\n")[2]
+            .replace(" ", "")
+            .split("\\|");
+
+        assertTrue(result[4].equals(String.valueOf(newCount)) && result[6].equals("2"));
     }
 
+    @Test
+    void patchCount_NothingToChange() throws Exception {
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_ASSEMBLY_WITH_NUMBER.formatted(UNIT_NUMBER_2));
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_RATE_BY_ASSEMBLY_NUM_AND_UNIT_NUMBER.formatted(UNIT_NUMBER_2, UNIT_NUMBER_1));
+
+        var rateId = new RateId();
+        rateId.setAssembly(UNIT_NUMBER_2);
+        rateId.setUnit(UNIT_NUMBER_1);
+        int newCount = 2;
+
+        assertThrows(RatePatchException.class, () -> rateRepository.patchCount(rateId, newCount));
+    }
+
+
+    @Test
+    void patchCount_NotExist() {
+        var rateId = new RateId();
+        rateId.setAssembly(UNIT_NUMBER_2);
+        rateId.setUnit(UNIT_NUMBER_1);
+        int newCount = 2;
+
+        assertThrows(RateNotExistException.class, () -> rateRepository.patchCount(rateId, newCount));
+    }
 }
