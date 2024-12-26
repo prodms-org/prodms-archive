@@ -88,18 +88,15 @@ class RateRepositoryImplTest {
         var id = new RateId();
         id.setAssembly(UNIT_NUMBER_1);
         id.setUnit(UNIT_NUMBER_2);
-        assertThrows(RateFindUnitException.class, () -> rateRepository.create(id, 2));
+        assertThrows(RateFindUnitException.class, () -> rateRepository.create(UNIT_NUMBER_2, UNIT_NUMBER_1, 2));
     }
 
     @Test
     void create_OK() throws Exception {
         TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
         TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_ASSEMBLY_WITH_NUMBER.formatted(UNIT_NUMBER_2));
-        var id = new RateId();
-        id.setAssembly(UNIT_NUMBER_2);
-        id.setUnit(UNIT_NUMBER_1);
         entityManagerProvider.getTransaction().begin();
-        rateRepository.create(id, 2);
+        rateRepository.create(UNIT_NUMBER_2, UNIT_NUMBER_1, 2);
         entityManagerProvider.getTransaction().commit();
 
         var result = TEST_DB_CONTAINER.execInContainer(

@@ -27,21 +27,21 @@ public class RateRepositoryImpl implements RateRepository {
     private final EntityManagerProvider entityManagerProvider;
 
     @Override
-    public void create(RateId id, Integer count) {
+    public void create(String assemblyNumber, String unitNumber, Integer count) {
         var entityManager = entityManagerProvider.getEntityManager();
         var rate = new Rate();
         rate.setRate(count);
         findAndSetUnit(
-            id.getUnit(),
+            unitNumber,
             rate::setUnit,
-            EX_MSG_RATE_FIND_UNIT.formatted(id.getUnit(), "Unit")
+            EX_MSG_RATE_FIND_UNIT.formatted(unitNumber, "Unit")
         );
 
         // TODO: validate if it really assembly
         findAndSetUnit(
-            id.getAssembly(),
+            assemblyNumber,
             rate::setAssembly,
-            EX_MSG_RATE_FIND_UNIT.formatted(id.getAssembly(), "Assembly")
+            EX_MSG_RATE_FIND_UNIT.formatted(assemblyNumber, "Assembly")
         );
         Long now = Instant.now().getEpochSecond();
         rate.setCreatedAt(now);
