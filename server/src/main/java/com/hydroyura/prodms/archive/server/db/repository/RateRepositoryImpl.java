@@ -53,7 +53,10 @@ public class RateRepositoryImpl implements RateRepository {
     }
 
     @Override
-    public void patchCount(RateId id, Integer newCount) {
+    public void patchCount(String assemblyNumber, String unitNumber, Integer newCount) {
+        var id = new RateId();
+        id.setAssembly(assemblyNumber);
+        id.setUnit(unitNumber);
         Rate rate = entityManagerProvider.getEntityManager().find(Rate.class, id);
         if (rate == null || !rate.getIsActive()) {
             log.warn(LOG_MSG_RATE_NOT_FOUND, id.getUnit(), id.getAssembly());
@@ -75,7 +78,7 @@ public class RateRepositoryImpl implements RateRepository {
     }
 
     @Override
-    public void delete(RateId id) {
+    public void delete(String assemblyNumber, String unitNumber) {
         throw new RuntimeException("Didn't implement yet!!!");
     }
 

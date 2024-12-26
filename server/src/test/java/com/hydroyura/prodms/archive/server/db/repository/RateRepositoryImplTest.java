@@ -122,7 +122,7 @@ class RateRepositoryImplTest {
         int newCount = 999;
 
         entityManagerProvider.getTransaction().begin();
-        rateRepository.patchCount(rateId, newCount);
+        rateRepository.patchCount(UNIT_NUMBER_2, UNIT_NUMBER_1, newCount);
         entityManagerProvider.getTransaction().commit();
 
         var result = TEST_DB_CONTAINER.execInContainer(
@@ -148,7 +148,7 @@ class RateRepositoryImplTest {
         rateId.setUnit(UNIT_NUMBER_1);
         int newCount = 2;
 
-        assertThrows(RatePatchException.class, () -> rateRepository.patchCount(rateId, newCount));
+        assertThrows(RatePatchException.class, () -> rateRepository.patchCount(UNIT_NUMBER_2, UNIT_NUMBER_1, newCount));
     }
 
 
@@ -159,6 +159,6 @@ class RateRepositoryImplTest {
         rateId.setUnit(UNIT_NUMBER_1);
         int newCount = 2;
 
-        assertThrows(RateNotExistException.class, () -> rateRepository.patchCount(rateId, newCount));
+        assertThrows(RateNotExistException.class, () -> rateRepository.patchCount(UNIT_NUMBER_2, UNIT_NUMBER_1, newCount));
     }
 }
