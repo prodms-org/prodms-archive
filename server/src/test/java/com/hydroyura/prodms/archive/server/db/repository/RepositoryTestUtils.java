@@ -27,6 +27,9 @@ public class RepositoryTestUtils {
     public static final String UNIT_SQL_SELECT_ACTIVE_BY_NUMBER =
         "echo \"SELECT * from units WHERE units.number = '%s' AND units.is_active = 'true';\" | psql -U test-pg-user -d test-archive";
 
+    public static final String RATE_SQL_SELECT_BY_NUMBERS =
+        "echo \"SELECT * from rates WHERE rates.unit_number = '%s' AND rates.is_active = 'true' AND rates.assembly_number = '%s';\" | psql -U test-pg-user -d test-archive";
+
     public static final String UNIT_SQL_TRUNCATE =
         "echo \"TRUNCATE TABLE units CASCADE;\" | psql -U test-pg-user -d test-archive";
 
@@ -34,6 +37,12 @@ public class RepositoryTestUtils {
         echo "
             INSERT INTO units (name, number, created_at, updated_at, version, status, type, is_active, additional) \s
             VALUES ('NAME_1', 'NUMBER_1', 100, 100, 1, 1, 1, true, 'some_additional');" | psql -U test-pg-user -d test-archive
+   \s""";
+
+    public static final String UNIT_SQL_CREATE_ASSEMBLY_WITH_NUMBER = """
+        echo "
+            INSERT INTO units (name, number, created_at, updated_at, version, status, type, is_active, additional) \s
+            VALUES ('NAME_1', '%s', 100, 100, 1, 2, 1, true, 'some_additional');" | psql -U test-pg-user -d test-archive
    \s""";
 
     public static final String UNIT_SQL_CREATE_NUMBER_1_NOT_ACTIVE = """
@@ -76,9 +85,11 @@ public class RepositoryTestUtils {
     public static final String UNIT_HIST_SQL_SELECT_BY_NUMBER_AND_VERSION =
         "echo \"SELECT COUNT(number) from units_history WHERE units_history.number = '%s' AND units_history.version = %s;\" | psql -U test-pg-user -d test-archive";
 
-
-
-
+    public static final String UNIT_SQL_CREATE_RATE_BY_ASSEMBLY_NUM_AND_UNIT_NUMBER = """
+        echo "
+            INSERT INTO rates (assembly_number, unit_number, rate, version, created_at, updated_at, is_active) \s
+            VALUES ('%s', '%s', 2, 1, 100, 100, true);" | psql -U test-pg-user -d test-archive
+   \s""";
 
 
     public static Unit generateUnit(String number, String name, Integer status, Integer type) {
