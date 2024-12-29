@@ -1,24 +1,5 @@
 package com.hydroyura.prodms.archive.server.controller.api;
 
-import com.hydroyura.prodms.archive.client.model.api.ApiSuccessResponse;
-import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
-import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
-import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
-import com.hydroyura.prodms.archive.client.model.req.PatchUnitReq;
-import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
-import com.hydroyura.prodms.archive.server.service.UnitService;
-import com.hydroyura.prodms.archive.server.validation.ValidationManager;
-import com.hydroyura.prodms.archive.server.validation.model.WrapNumber;
-import jakarta.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
-import java.util.Objects;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import static com.hydroyura.prodms.archive.server.utils.SharedStringConstants.REQUEST_ATTR_UUID_KEY;
 import static com.hydroyura.prodms.archive.server.utils.SharedStringConstants.REQUEST_TIMESTAMP_KEY;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -26,17 +7,34 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import org.springframework.web.bind.annotation.RestController;
-
+import com.hydroyura.prodms.archive.client.model.api.ApiSuccessResponse;
+import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
+import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
+import com.hydroyura.prodms.archive.client.model.req.PatchUnitReq;
+import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
+import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
+import com.hydroyura.prodms.archive.server.service.UnitService;
+import com.hydroyura.prodms.archive.server.validation.ValidationManager;
+import com.hydroyura.prodms.archive.server.validation.model.WrapNumber;
+import jakarta.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(
-        value = "/api/v1/units",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    value = "/api/v1/units",
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE)
 public class UnitController extends AbstractRestController {
 
     private final ValidationManager validationManager;
@@ -79,21 +77,6 @@ public class UnitController extends AbstractRestController {
         unitService.patch(number, req);
         return ResponseEntity.ok(buildApiResponse(null, request));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private static UUID extractRequestUUID(HttpServletRequest request) {

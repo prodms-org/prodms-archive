@@ -12,7 +12,7 @@ public class GetAssemblyRes {
     private String number;
     private String name;
     private UnitStatus status;
-    private Map<UnitType, Map<Object, Integer>> rates = new HashMap<>();
+    private Map<UnitType, Map<SimpleUnit, Integer>> rates = new HashMap<>();
 
     @Data
     public static class SimpleUnit {

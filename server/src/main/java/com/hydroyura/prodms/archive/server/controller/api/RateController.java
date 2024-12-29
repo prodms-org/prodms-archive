@@ -27,7 +27,7 @@ public class RateController extends AbstractRestController {
     private final RateService rateService;
 
 
-    @RequestMapping(method = GET, value = {"/{assembly}", "/{assembly}/"})
+    @RequestMapping(method = GET, value = {"/{assembly}", "/{unit}/"})
     public ResponseEntity<?> getAssembly(String assembly, String unit, HttpServletRequest request) {
         var response = rateService.getAssembly(assembly);
         return null;
@@ -47,5 +47,8 @@ public class RateController extends AbstractRestController {
     public ResponseEntity<?> patchCount(@RequestBody PatchRateCountReq req, HttpServletRequest request) {
         return null;
     }
+
+
+
 
 }
