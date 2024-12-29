@@ -7,6 +7,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.hydroyura.prodms.archive.client.model.req.CreateRateReq;
 import com.hydroyura.prodms.archive.client.model.req.PatchRateCountReq;
+import com.hydroyura.prodms.archive.server.service.RateService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -23,9 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
     produces = MediaType.APPLICATION_JSON_VALUE)
 public class RateController extends AbstractRestController {
 
+    private final RateService rateService;
 
-    @RequestMapping(method = GET, value = {"/{assembly}/{unit}", "/{number}/{unit}/"})
-    public ResponseEntity<?> getAssembly(String number, String unit, HttpServletRequest request) {
+
+    @RequestMapping(method = GET, value = {"/{assembly}", "/{unit}/"})
+    public ResponseEntity<?> getAssembly(String assembly, String unit, HttpServletRequest request) {
+        var response = rateService.getAssembly(assembly);
         return null;
     }
 
@@ -39,11 +43,12 @@ public class RateController extends AbstractRestController {
         return null;
     }
 
-
     @RequestMapping(method = PATCH, value = {"/{assembly}/{unit}/count", "/{number}/{unit}/count/"})
     public ResponseEntity<?> patchCount(@RequestBody PatchRateCountReq req, HttpServletRequest request) {
         return null;
     }
+
+
 
 
 }

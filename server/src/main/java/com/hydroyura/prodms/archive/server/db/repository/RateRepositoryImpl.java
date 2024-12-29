@@ -9,10 +9,13 @@ import com.hydroyura.prodms.archive.server.db.EntityManagerProvider;
 import com.hydroyura.prodms.archive.server.db.entity.Rate;
 import com.hydroyura.prodms.archive.server.db.entity.RateId;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
+import com.hydroyura.prodms.archive.server.dto.RateDto;
 import com.hydroyura.prodms.archive.server.exception.model.db.RateFindUnitException;
 import com.hydroyura.prodms.archive.server.exception.model.db.RateNotExistException;
 import com.hydroyura.prodms.archive.server.exception.model.db.RatePatchException;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
@@ -80,6 +83,11 @@ public class RateRepositoryImpl implements RateRepository {
     @Override
     public void delete(String assemblyNumber, String unitNumber) {
         throw new RuntimeException("Didn't implement yet!!!");
+    }
+
+    @Override
+    public Collection<RateDto> getRates(String assembly) {
+        return List.of();
     }
 
     private void findAndSetUnit(String number, Consumer<Unit> consumer, String msg) {
