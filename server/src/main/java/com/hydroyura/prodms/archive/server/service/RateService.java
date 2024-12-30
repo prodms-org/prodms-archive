@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public final class RateService {
 
@@ -72,6 +72,16 @@ public final class RateService {
             //TODO: create custom ex
             throw new RuntimeException();
         }
+    }
+
+    public Optional<?> getAssemblyExtended(String assemblyNumber) {
+        // 1. Получили сырую сборку
+        var assembly = getAssembly(assemblyNumber).get();
+
+        // 2. Обернуть сырую сборку в композитор
+
+
+        return Optional.empty();
     }
 
     private GetAssemblyRes buildGetAssemblyRes(Unit unit) {
