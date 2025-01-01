@@ -67,14 +67,17 @@ class RateCompositorServiceTest {
         res.setRates(rates);
 
         // when
-        var result = rateCompositorService.getRootAssembly(res).getSpecification();
+        var result = rateCompositorService.getRootAssembly(res).getRates().values()
+            .stream()
+            .flatMap(e -> e.entrySet().stream())
+            .collect(Collectors.toMap(e -> e.getKey().getNumber(), Map.Entry::getValue));
 
         // then
         assertTrue(result.size() == 4
-            && result.keySet().stream().map(Element::getNumber).anyMatch(PART_NUMBER_1::equals)
-            && result.keySet().stream().map(Element::getNumber).anyMatch(PART_NUMBER_2::equals)
-            && result.keySet().stream().map(Element::getNumber).anyMatch(PART_NUMBER_3::equals)
-            && result.keySet().stream().map(Element::getNumber).anyMatch(STANDARD_NUMBER_1::equals)
+            && result.keySet().stream().anyMatch(PART_NUMBER_1::equals)
+            && result.keySet().stream().anyMatch(PART_NUMBER_2::equals)
+            && result.keySet().stream().anyMatch(PART_NUMBER_3::equals)
+            && result.keySet().stream().anyMatch(STANDARD_NUMBER_1::equals)
         );
     }
 
@@ -106,9 +109,10 @@ class RateCompositorServiceTest {
 
         Mockito.when(rateRepository.getRates(ASSEMBLY_NUMBER_2)).thenReturn(assembly2Rates());
         // when
-        Map<String, Integer> result = rateCompositorService.getRootAssembly(res).getSpecification().entrySet()
-                .stream()
-                .collect(Collectors.toMap(e -> e.getKey().getNumber(), Map.Entry::getValue));
+        Map<String, Integer> result = rateCompositorService.getRootAssembly(res).getRates().values()
+            .stream()
+            .flatMap(e -> e.entrySet().stream())
+            .collect(Collectors.toMap(e -> e.getKey().getNumber(), Map.Entry::getValue));
 
         // then
         assertTrue(result.size() == 5
