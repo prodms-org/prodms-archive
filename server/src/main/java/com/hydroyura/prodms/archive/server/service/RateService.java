@@ -8,6 +8,7 @@ import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.repository.RateRepository;
 import com.hydroyura.prodms.archive.server.db.repository.UnitRepository;
 import com.hydroyura.prodms.archive.server.dto.RateDto;
+import com.hydroyura.prodms.archive.server.service.compositor.service.RateCompositorService;
 import jakarta.persistence.EntityTransaction;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,15 +16,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public final class RateService {
 
     private final RateRepository rateRepository;
     private final UnitRepository unitRepository;
     private final EntityManagerProvider entityManagerProvider;
+    private final RateCompositorService rateCompositorService;
 
     public void create(String assemblyNumber, String unitNumber, Integer count) {
         EntityTransaction transaction = entityManagerProvider.getTransaction();
@@ -74,6 +76,10 @@ public final class RateService {
         }
     }
 
+    public Optional<GetAssemblyRes> getAssemblyExtended(String assemblyNumber) {
+        return getAssembly(assemblyNumber).map(rateCompositorService::getRootAssembly);
+    }
+
     private GetAssemblyRes buildGetAssemblyRes(Unit unit) {
         var assembly = new GetAssemblyRes();
         assembly.setName(unit.getName());
@@ -88,6 +94,7 @@ public final class RateService {
         return res;
     }
 
+    // TODO: Replace to converter
     private Map<UnitType, Map<GetAssemblyRes.SimpleUnit, Integer>> convertRates(Collection<RateDto> rates) {
         return rates
             .stream()
