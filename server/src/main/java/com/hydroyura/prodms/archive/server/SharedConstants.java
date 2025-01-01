@@ -8,6 +8,7 @@ public class SharedConstants {
     public static final String LOG_MSG_UNIT_NOT_FOUND = "Unit with number = [{}] not found";
     public static final String LOG_MSG_RATE_NOT_FOUND = "Rate with unit number = [{}] and assembly number = [{}] not found";
 
+    public static final String LOG_MSG_GOT_REQUEST = "Got request to uri = [{}], uuid = [{}], ts = [{}]";
 
     public static final String EX_MSG_UNIT_DELETE =
         "Can not delete unit with number = [%s]. Possible reasons are unit not exist or already deleted.";
@@ -19,4 +20,10 @@ public class SharedConstants {
         "Can not find rate with assembly_number = [%s] and unit_number = [%s]";
     public static final String EX_MSG_RATE_PATCH_COUNT =
         "Can not patch rate with unit number = [%s] and assembly number = [%s]. Current count = [%s] new count = [%s].";
+
+    public static final String REQUEST_LOG_ID_HEADER_NAME = "Request-log-id";
+
+    public static final String REQUEST_ATTR_UUID_KEY = "REQUEST_UUID";
+    public static final String REQUEST_TIMESTAMP_KEY = "REQUEST_TIMESTAMP";
+    public static final String REQUEST_URI_KEY = "REQUEST_URI";
 }
