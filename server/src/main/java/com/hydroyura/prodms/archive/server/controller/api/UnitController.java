@@ -1,7 +1,7 @@
 package com.hydroyura.prodms.archive.server.controller.api;
 
-import static com.hydroyura.prodms.archive.server.utils.SharedStringConstants.REQUEST_ATTR_UUID_KEY;
-import static com.hydroyura.prodms.archive.server.utils.SharedStringConstants.REQUEST_TIMESTAMP_KEY;
+import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_ATTR_UUID_KEY;
+import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_TIMESTAMP_KEY;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;

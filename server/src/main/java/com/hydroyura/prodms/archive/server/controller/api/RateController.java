@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,14 +30,8 @@ public class RateController extends AbstractRestController {
 
 
     @RequestMapping(method = GET, value = {"/{assembly}", "/{assembly}/"})
-    public ResponseEntity<?> getAssembly(String assembly, HttpServletRequest request) {
+    public ResponseEntity<?> getAssembly(@PathVariable String assembly, HttpServletRequest request, @RequestParam boolean extended) {
         var response = rateService.getAssembly(assembly);
-        return null;
-    }
-
-    @RequestMapping(method = GET, value = {"/{assembly}", "/{assembly}/"})
-    public ResponseEntity<?> getAssemblyExtended(String assembly, HttpServletRequest request, @RequestParam Boolean extended) {
-        var response = rateService.getAssemblyExtended(assembly);
         return null;
     }
 

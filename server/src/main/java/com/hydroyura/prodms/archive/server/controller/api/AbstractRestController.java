@@ -1,8 +1,8 @@
 package com.hydroyura.prodms.archive.server.controller.api;
 
 
-import static com.hydroyura.prodms.archive.server.utils.SharedStringConstants.REQUEST_ATTR_UUID_KEY;
-import static com.hydroyura.prodms.archive.server.utils.SharedStringConstants.REQUEST_TIMESTAMP_KEY;
+import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_ATTR_UUID_KEY;
+import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_TIMESTAMP_KEY;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
