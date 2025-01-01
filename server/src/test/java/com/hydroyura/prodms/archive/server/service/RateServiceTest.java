@@ -35,7 +35,7 @@ class RateServiceTest {
         this.rateRepository = Mockito.mock(RateRepository.class);
         this.unitRepository = Mockito.mock(UnitRepository.class);
         this.entityManagerProvider = Mockito.mock(EntityManagerProvider.class);
-        this.rateService = new RateService(rateRepository, unitRepository, entityManagerProvider);
+        this.rateService = new RateService(rateRepository, unitRepository, entityManagerProvider, null);
     }
 
 

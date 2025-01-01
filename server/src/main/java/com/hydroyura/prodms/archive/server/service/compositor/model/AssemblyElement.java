@@ -3,7 +3,9 @@ package com.hydroyura.prodms.archive.server.service.compositor.model;
 import com.hydroyura.prodms.archive.client.model.enums.UnitType;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -41,5 +43,19 @@ public class AssemblyElement implements Element {
     @Override
     public UnitType getType() {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AssemblyElement that = (AssemblyElement) o;
+        return Objects.equals(number, that.number) && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, type);
     }
 }

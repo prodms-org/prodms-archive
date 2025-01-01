@@ -11,6 +11,7 @@
 
     <artifactId>server</artifactId>
 
+
     <properties>
         <hibernate.version>6.6.2.Final</hibernate.version>
         <postgres.driver.version>42.7.4</postgres.driver.version>
