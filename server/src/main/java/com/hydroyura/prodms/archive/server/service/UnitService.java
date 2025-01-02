@@ -18,6 +18,7 @@ import jakarta.persistence.EntityTransaction;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -104,11 +105,8 @@ public class UnitService {
         }
     }
 
-    public GetUnitRes get(String number) {
-        // TODO: custom ex
-        return unitRepository.get(number)
-            .map(unitToGetUnitResMapper::toDestination)
-            .orElseThrow(() -> new RuntimeException("Not found"));
+    public Optional<GetUnitRes> get(String number) {
+        return unitRepository.get(number).map(unitToGetUnitResMapper::toDestination);
     }
 
     public void patch(String number, PatchUnitReq req) {
