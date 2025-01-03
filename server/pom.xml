@@ -17,7 +17,7 @@
         <postgres.driver.version>42.7.4</postgres.driver.version>
         <flywayplugin.version>10.21.0</flywayplugin.version>
         <testcontainers.version>1.19.3</testcontainers.version>
-
+        <spring.doc.openapi.version>2.7.0</spring.doc.openapi.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.7.0</version>
+            <version>${spring.doc.openapi.version}</version>
         </dependency>
 
         <dependency>
