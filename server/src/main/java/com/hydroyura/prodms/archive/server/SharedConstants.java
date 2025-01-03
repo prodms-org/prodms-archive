@@ -26,4 +26,7 @@ public class SharedConstants {
     public static final String REQUEST_ATTR_UUID_KEY = "REQUEST_UUID";
     public static final String REQUEST_TIMESTAMP_KEY = "REQUEST_TIMESTAMP";
     public static final String REQUEST_URI_KEY = "REQUEST_URI";
+
+
+    public static final String RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND = "Number = [%s] not found";
 }

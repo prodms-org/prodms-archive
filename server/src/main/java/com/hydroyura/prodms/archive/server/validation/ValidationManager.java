@@ -26,10 +26,6 @@ public class ValidationManager {
 
     private final ValidationProps props;
 
-    @PostConstruct
-    void init() {
-        int a = 1;
-    }
 
     public <T> void validate(T object, Class<T> type) {
         Collection<Validator> acceptableValidators = getValidatorForType(type);

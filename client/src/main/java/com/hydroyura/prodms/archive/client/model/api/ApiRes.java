@@ -2,15 +2,13 @@ package com.hydroyura.prodms.archive.client.model.api;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Data;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
 @Data
-public class ApiResponse<T> {
+public class ApiRes<T> {
 
     private UUID id;
     private Timestamp timestamp;
