@@ -6,7 +6,8 @@ validation:
   createUnit:
     numberRegex: ^(?=.{3,20}$)[a-zA-Z0-9]+$
     nameRegex: ^(?=.{3,20}$)[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*$
-
+  number:
+    unitRegex: ^(?=.{3,20}$)[a-zA-Z0-9\-\\\/]+$
 
 batch:
   workers:
@@ -27,3 +28,4 @@ spring:
       initialize-schema: always
     job:
       enabled: false
+

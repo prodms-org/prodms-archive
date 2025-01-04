@@ -28,8 +28,8 @@ public class RestControllerLoggerInterceptor implements HandlerInterceptor {
 
         log.info(LOG_MSG_GOT_REQUEST, uri, uuid, ts);
 
-        req.setAttribute(REQUEST_ATTR_UUID_KEY, uuid.toString());
-        req.setAttribute(REQUEST_TIMESTAMP_KEY, ts.toString());
+        req.setAttribute(REQUEST_ATTR_UUID_KEY, uuid);
+        req.setAttribute(REQUEST_TIMESTAMP_KEY, ts);
         req.setAttribute(REQUEST_URI_KEY, uri);
 
         return Boolean.TRUE;

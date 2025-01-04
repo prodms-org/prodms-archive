@@ -14,4 +14,6 @@ public class ValidationMessageCodes {
     public static final String CREATE_UNIT_TYPE_EMPTY = "validation.createunit.type.empty";
     public static final String CREATE_UNIT_STATUS_EMPTY = "validation.createunit.status.empty";
 
+    public static final String NUMBER_UNIT_REGEX = "validation.number.unit.regex";
+
 }

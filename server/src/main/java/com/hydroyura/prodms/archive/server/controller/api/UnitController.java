@@ -10,6 +10,7 @@ import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
 import com.hydroyura.prodms.archive.server.controller.swagger.UnitDocumentedController;
 import com.hydroyura.prodms.archive.server.service.UnitService;
 import com.hydroyura.prodms.archive.server.validation.ValidationManager;
+import com.hydroyura.prodms.archive.server.validation.enums.NumberKey;
 import com.hydroyura.prodms.archive.server.validation.model.WrapNumber;
 import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -36,9 +37,9 @@ public class UnitController implements UnitDocumentedController {
 
 
     @Override
-    @RequestMapping(method = GET, value = {"/{number}", "/{number}/"})
+    @RequestMapping(method = GET, value = "/{number}")
     public ResponseEntity<ApiRes<GetUnitRes>> get(@PathVariable String number, HttpServletRequest request) {
-        validationManager.validate(new WrapNumber(number), WrapNumber.class);
+        validationManager.validate(new WrapNumber(number, String.class, NumberKey.UNIT), WrapNumber.class);
         var res = unitService.get(number);
         return buildApiResponse(res, request, number);
     }

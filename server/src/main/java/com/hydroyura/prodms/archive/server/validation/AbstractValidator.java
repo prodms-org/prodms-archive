@@ -1,6 +1,7 @@
 package com.hydroyura.prodms.archive.server.validation;
 
 import com.hydroyura.prodms.archive.server.props.ValidationProps;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ public abstract class AbstractValidator<T> implements Validator {
     private static final String VALIDATION_DISABLED_MSG = "Validation is disabled for object type = [{}]";
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    @Getter
     protected final Class<T> type;
     protected final ValidationProps props;
 

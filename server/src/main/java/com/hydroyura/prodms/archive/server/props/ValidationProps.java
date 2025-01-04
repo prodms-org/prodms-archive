@@ -9,12 +9,17 @@ public class ValidationProps {
 
     private Boolean enabled;
     private CreateUnit createUnit;
-
+    private Number number;
 
     @Data
     public static class CreateUnit {
         private String numberRegex;
         private String nameRegex;
+    }
+
+    @Data
+    public static class Number {
+        private String unitRegex;
     }
 
 }

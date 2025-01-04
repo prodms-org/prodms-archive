@@ -1,5 +1,6 @@
 package com.hydroyura.prodms.archive.server.validation.model;
 
+import com.hydroyura.prodms.archive.server.validation.enums.NumberKey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,8 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WrapNumber {
+public class WrapNumber<T> {
 
-    private String number;
+    private T number;
+    private Class<T> type;
+    private NumberKey key;
 
 }
