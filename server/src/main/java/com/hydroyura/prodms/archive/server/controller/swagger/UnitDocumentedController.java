@@ -1,7 +1,9 @@
 package com.hydroyura.prodms.archive.server.controller.swagger;
 
 import com.hydroyura.prodms.archive.client.model.api.ApiRes;
+import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
+import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,6 +42,21 @@ public interface UnitDocumentedController {
     class ApiResGetUnitResBadRequest extends ApiRes<Void> {}
 
 
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            content = { @Content(schema = @Schema(implementation = ApiResListUnitsResSuccess.class)) },
+            description = "Success"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            content = { @Content(schema = @Schema(implementation = ApiResListUnitsResBadRequest.class)) },
+            description = "Filter values isn't valid"
+        )
+    })
+    ResponseEntity<ApiRes<ListUnitsRes>> list(ListUnitsReq req, HttpServletRequest request);
 
+    class ApiResListUnitsResSuccess extends ApiRes<ListUnitsRes> {}
+    class ApiResListUnitsResBadRequest extends ApiRes<Void> {}
 
 }
