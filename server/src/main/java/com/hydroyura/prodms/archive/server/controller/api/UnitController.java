@@ -6,7 +6,9 @@ import static com.hydroyura.prodms.archive.server.SharedConstants.RESPONSE_ERROR
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import com.hydroyura.prodms.archive.client.model.api.ApiRes;
+import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
+import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
 import com.hydroyura.prodms.archive.server.controller.swagger.UnitDocumentedController;
 import com.hydroyura.prodms.archive.server.service.UnitService;
 import com.hydroyura.prodms.archive.server.validation.ValidationManager;
@@ -41,12 +43,20 @@ public class UnitController implements UnitDocumentedController {
     public ResponseEntity<ApiRes<GetUnitRes>> get(@PathVariable String number, HttpServletRequest request) {
         validationManager.validate(new WrapNumber(number, String.class, NumberKey.UNIT), WrapNumber.class);
         var res = unitService.get(number);
-        return buildApiResponse(res, request, number);
+        return buildApiResponseOkOrNotFound(res, request, number);
+    }
+
+    @Override
+    @RequestMapping(method = GET, value = "")
+    public ResponseEntity<ApiRes<ListUnitsRes>> list(ListUnitsReq req, HttpServletRequest request) {
+        validationManager.validate(req, ListUnitsReq.class);
+        var res = unitService.list(req);
+        return buildApiResponseOk(res, request);
     }
 
 
 
-    private static <T> ResponseEntity<ApiRes<T>> buildApiResponse(Optional<T> data, HttpServletRequest req, Object number) {
+    private static <T> ResponseEntity<ApiRes<T>> buildApiResponseOkOrNotFound(Optional<T> data, HttpServletRequest req, Object number) {
         ApiRes<T> apiResponse = new ApiRes<>();
         apiResponse.setId(extractRequestUUID(req));
         apiResponse.setTimestamp(extractRequestTimestamp(req));
@@ -65,11 +75,20 @@ public class UnitController implements UnitDocumentedController {
         return responseEntity;
     }
 
+    private static <T> ResponseEntity<ApiRes<T>> buildApiResponseOk(T data, HttpServletRequest req) {
+        ApiRes<T> apiResponse = new ApiRes<>();
+        apiResponse.setId(extractRequestUUID(req));
+        apiResponse.setTimestamp(extractRequestTimestamp(req));
+        apiResponse.setData(data);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+
     private static UUID extractRequestUUID(HttpServletRequest request) {
-        return Optional
-            .ofNullable(request.getAttribute(REQUEST_ATTR_UUID_KEY))
-            .map(UUID.class::cast)
-            .orElseThrow(RuntimeException::new);
+    return Optional
+        .ofNullable(request.getAttribute(REQUEST_ATTR_UUID_KEY))
+        .map(UUID.class::cast)
+        .orElseThrow(RuntimeException::new);
     }
 
     private static Timestamp extractRequestTimestamp(HttpServletRequest request) {
@@ -99,12 +118,7 @@ public class UnitController implements UnitDocumentedController {
 
 
     /*
-    @RequestMapping(method = GET, value = {"", "/"})
-    public ResponseEntity<ApiResponse<ListUnitsRes>> list(ListUnitsReq req, HttpServletRequest request) {
-        validationManager.validate(req, ListUnitsReq.class);
-        var res = unitService.list(req);
-        return ResponseEntity.ok(buildApiResponse(res, request));
-    }
+
 
     @RequestMapping(method = POST, value = {"", "/"})
     public ResponseEntity<ApiResponse<Void>> create(@RequestBody CreateUnitReq req, HttpServletRequest request) {
