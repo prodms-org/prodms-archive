@@ -2,6 +2,7 @@ package com.hydroyura.prodms.archive.server.db.repository;
 
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_HIST_SQL_SELECT_BY_NUMBER_AND_VERSION;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_NUMBER_1;
+import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_CREATE_NUMBER_1;
 import static com.hydroyura.prodms.archive.server.db.repository.RepositoryTestUtils.UNIT_SQL_TRUNCATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -75,6 +76,8 @@ class UnitHistRepositoryImplTest {
 
     @Test
     void create_OK() throws Exception {
+        // given
+        TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1);
         var unitHist = new UnitHist();
         unitHist.setVersion(1);
         unitHist.setNumber(UNIT_NUMBER_1);
@@ -85,11 +88,15 @@ class UnitHistRepositoryImplTest {
         unitHistRepository.create(unitHist);
         entityManagerProvider.getTransaction().commit();
 
+
+        // when
         var result = TEST_DB_CONTAINER.execInContainer(
                 "bash",
                 "-c",
                 UNIT_HIST_SQL_SELECT_BY_NUMBER_AND_VERSION.formatted(UNIT_NUMBER_1, 1))
             .getStdout().split("\\n")[2].replace(" ", "");
+
+        // then
         assertEquals(1, Integer.valueOf(result));
     }
 

@@ -10,6 +10,8 @@ public class SharedConstants {
 
     public static final String LOG_MSG_GOT_REQUEST = "Got request to uri = [{}], uuid = [{}], ts = [{}]";
 
+    public static final String LOG_MSG_VALIDATION_NUMBER_BEGIN = "Start validation for number = [{}] and type = [{}]";
+
     public static final String EX_MSG_UNIT_DELETE =
         "Can not delete unit with number = [%s]. Possible reasons are unit not exist or already deleted.";
     public static final String EX_MSG_UNIT_PATCH =
@@ -26,4 +28,7 @@ public class SharedConstants {
     public static final String REQUEST_ATTR_UUID_KEY = "REQUEST_UUID";
     public static final String REQUEST_TIMESTAMP_KEY = "REQUEST_TIMESTAMP";
     public static final String REQUEST_URI_KEY = "REQUEST_URI";
+
+
+    public static final String RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND = "Number = [%s] not found";
 }
