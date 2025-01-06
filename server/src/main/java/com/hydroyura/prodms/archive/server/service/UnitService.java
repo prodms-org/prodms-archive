@@ -1,5 +1,7 @@
 package com.hydroyura.prodms.archive.server.service;
 
+import static com.hydroyura.prodms.archive.server.SharedConstants.LOG_MSG_UNIT_DELETE_NOT_FOUND;
+
 import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.client.model.req.PatchUnitReq;
@@ -20,10 +22,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UnitService {
 
     private final CreateUnitReqToUnitMapper createUnitReqToUnitMapper;
@@ -89,20 +93,22 @@ public class UnitService {
         }
     }
 
-    public void delete(String number) {
+    public Optional<String> delete(String number) {
         EntityTransaction transaction = entityManagerProvider.getTransaction();
+        Optional<String> result = Optional.empty();
         try {
             transaction.begin();
-            unitRepository.delete(number);
+            result = unitRepository.delete(number);
 
             var unitHist = new UnitHist();
             unitHistRepository.create(unitHist);
             transaction.commit();
         } catch (Exception e) {
+            log.error(LOG_MSG_UNIT_DELETE_NOT_FOUND.formatted(number), e);
             transaction.rollback();
-            //TODO: create custom ex
-            throw new RuntimeException();
+            result = Optional.empty();
         }
+        return result;
     }
 
     public Optional<GetUnitRes> get(String number) {

@@ -28,7 +28,6 @@ import com.hydroyura.prodms.archive.server.db.entity.Rate;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.entity.UnitHist;
 import com.hydroyura.prodms.archive.server.db.order.UnitOrder;
-import com.hydroyura.prodms.archive.server.exception.model.db.UnitDeleteException;
 import com.hydroyura.prodms.archive.server.exception.model.db.UnitPatchException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManagerFactory;
@@ -157,13 +156,13 @@ class UnitRepositoryImplTest {
 
     @Test
     void delete_notExistent() {
-        assertThrows(UnitDeleteException.class, () -> unitRepository.delete(UNIT_NUMBER_1));
+        assertTrue(unitRepository.delete(UNIT_NUMBER_1).isEmpty());
     }
 
     @Test
     void delete_notActive() throws Exception {
         TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1_NOT_ACTIVE);
-        assertThrows(UnitDeleteException.class, () -> unitRepository.delete(UNIT_NUMBER_1));
+        assertTrue(unitRepository.delete(UNIT_NUMBER_1).isEmpty());
     }
 
     @Test

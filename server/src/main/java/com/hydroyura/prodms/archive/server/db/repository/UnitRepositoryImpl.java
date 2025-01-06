@@ -1,6 +1,5 @@
 package com.hydroyura.prodms.archive.server.db.repository;
 
-import static com.hydroyura.prodms.archive.server.SharedConstants.EX_MSG_UNIT_DELETE;
 import static com.hydroyura.prodms.archive.server.SharedConstants.EX_MSG_UNIT_PATCH;
 import static com.hydroyura.prodms.archive.server.SharedConstants.LOG_MSG_UNIT_NOT_FOUND;
 
@@ -9,7 +8,6 @@ import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.server.db.EntityManagerProvider;
 import com.hydroyura.prodms.archive.server.db.entity.Unit;
 import com.hydroyura.prodms.archive.server.db.order.UnitOrder;
-import com.hydroyura.prodms.archive.server.exception.model.db.UnitDeleteException;
 import com.hydroyura.prodms.archive.server.exception.model.db.UnitPatchException;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -63,19 +61,16 @@ public class UnitRepositoryImpl implements UnitRepository {
     }
 
     @Override
-    public void delete(String number) {
-        var unit = get(number)
+    public Optional<String> delete(String number) {
+        return get(number)
             .map(u -> {
                 u.setUpdatedAt(Instant.now().getEpochSecond());
                 u.setVersion(u.getVersion() + 1);
                 u.setIsActive(Boolean.FALSE);
                 return u;
-            });
-        if (unit.isPresent()) {
-            entityManagerProvider.getEntityManager().merge(unit.get());
-        } else {
-            throw new UnitDeleteException(EX_MSG_UNIT_DELETE.formatted(number));
-        }
+            })
+            .map(entityManagerProvider.getEntityManager()::merge)
+            .map(Unit::getNumber);
     }
 
     @Override

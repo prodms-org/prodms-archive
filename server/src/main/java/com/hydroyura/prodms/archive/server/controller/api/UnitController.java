@@ -3,6 +3,7 @@ package com.hydroyura.prodms.archive.server.controller.api;
 import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_ATTR_UUID_KEY;
 import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_TIMESTAMP_KEY;
 import static com.hydroyura.prodms.archive.server.SharedConstants.RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -65,6 +66,13 @@ public class UnitController implements UnitDocumentedController {
         return buildApiResponseNotContent(request);
     }
 
+    @Override
+    @RequestMapping(method = DELETE, value = "/{number}")
+    public ResponseEntity<ApiRes<Void>> delete(@PathVariable String number, HttpServletRequest request) {
+        validationManager.validate(new WrapNumber(number, String.class, NumberKey.UNIT), WrapNumber.class);
+        var result = unitService.delete(number);
+        return buildApiResponseNotContentOrNotFound(result.isPresent(), request, number);
+    }
 
 
     private static <T> ResponseEntity<ApiRes<T>> buildApiResponseOkOrNotFound(Optional<T> data, HttpServletRequest req, Object number) {
@@ -79,6 +87,21 @@ public class UnitController implements UnitDocumentedController {
         ResponseEntity<ApiRes<T>> responseEntity;
         if (data.isPresent()) {
             responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        } else {
+            responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+        }
+
+        return responseEntity;
+    }
+
+    private static ResponseEntity<ApiRes<Void>> buildApiResponseNotContentOrNotFound(Boolean flag, HttpServletRequest req, Object number) {
+        ApiRes<Void> apiResponse = new ApiRes<>();
+        apiResponse.setId(extractRequestUUID(req));
+        apiResponse.setTimestamp(extractRequestTimestamp(req));
+
+        ResponseEntity<ApiRes<Void>> responseEntity;
+        if (flag) {
+            responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.NO_CONTENT);
         } else {
             responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
@@ -137,12 +160,7 @@ public class UnitController implements UnitDocumentedController {
 
     /*
 
-    @RequestMapping(method = DELETE, value = {"/{number}", "/{number}/"})
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String number, HttpServletRequest request) {
-        validationManager.validate(new WrapNumber(number), WrapNumber.class);
-        unitService.delete(number);
-        return ResponseEntity.ok(buildApiResponse(null, request));
-    }
+
 
     @RequestMapping(method = PATCH, value = {"/{number}", "/{number}/"})
     public ResponseEntity<ApiResponse<Void>> patch(@PathVariable String number,
