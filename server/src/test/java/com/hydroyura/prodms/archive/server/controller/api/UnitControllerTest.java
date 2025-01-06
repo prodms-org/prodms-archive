@@ -176,6 +176,48 @@ class UnitControllerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @Test
+    void delete_OK() throws Exception {
+        Mockito
+            .when(unitService.delete(UNIT_NUMBER_1))
+            .thenReturn(Optional.of(UNIT_NUMBER_1));
+
+        mockMvc
+            .perform(MockMvcRequestBuilders
+                .delete("/api/v1/units/" + UNIT_NUMBER_1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    void delete_NOT_FOUND() throws Exception {
+        Mockito
+            .when(unitService.delete(UNIT_NUMBER_1))
+            .thenReturn(Optional.empty());
+
+        mockMvc
+            .perform(MockMvcRequestBuilders
+                .delete("/api/v1/units/" + UNIT_NUMBER_1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    void delete_BAD_REQUEST() throws Exception {
+        var wrapNumber = new WrapNumber(UNIT_NUMBER_1, String.class, NumberKey.UNIT);
+        var errors = new SimpleErrors(wrapNumber);
+        Mockito
+            .doThrow(new ValidationException(errors, "TEST MESSAGE"))
+            .when(validationManager)
+            .validate(wrapNumber, WrapNumber.class);
+
+        mockMvc
+            .perform(MockMvcRequestBuilders
+                .delete("/api/v1/units/" + UNIT_NUMBER_1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
     private MultiValueMap<String, String> getMultiValueMapFor(ListUnitsReq req) throws Exception {
         var jsonString = objectMapper.writeValueAsString(req);
         Map<String, Object> map = objectMapper.readValue(jsonString, MAP_TYPE_FOR_PARAMS);

@@ -38,7 +38,6 @@ public interface UnitDocumentedController {
         )
     })
     ResponseEntity<ApiRes<GetUnitRes>> get(@PathVariable String number, HttpServletRequest request);
-
     class ApiResGetUnitResSuccess extends ApiRes<GetUnitRes> {}
     class ApiResGetUnitResNotFount extends ApiRes<Void> {}
     class ApiResGetUnitResBadRequest extends ApiRes<Void> {}
@@ -57,7 +56,6 @@ public interface UnitDocumentedController {
         )
     })
     ResponseEntity<ApiRes<ListUnitsRes>> list(ListUnitsReq req, HttpServletRequest request);
-
     class ApiResListUnitsResSuccess extends ApiRes<ListUnitsRes> {}
     class ApiResListUnitsResBadRequest extends ApiRes<Void> {}
 
@@ -75,8 +73,30 @@ public interface UnitDocumentedController {
         )
     })
     ResponseEntity<ApiRes<Void>> create(@RequestBody CreateUnitReq req, HttpServletRequest request);
-
     class ApiResCreateUnitSuccess extends ApiRes<Void> {}
     class ApiResCreateUnitBadRequest extends ApiRes<Void> {}
+
+
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "201",
+            content = { @Content(schema = @Schema(implementation = ApiResDeleteUnitSuccess.class)) },
+            description = "Unit was deleted successful"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            content = { @Content(schema = @Schema(implementation = ApiResDeleteUnitBadRequest.class)) },
+            description = "Unit number doesn't correspond required rules"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            content = { @Content(schema = @Schema(implementation = ApiResDeleteUnitNotFound.class)) },
+            description = "Unit with getting number doesn't exist"
+        )
+    })
+    ResponseEntity<ApiRes<Void>> delete(@PathVariable String number, HttpServletRequest request);
+    class ApiResDeleteUnitSuccess extends ApiRes<Void> {}
+    class ApiResDeleteUnitBadRequest extends ApiRes<Void> {}
+    class ApiResDeleteUnitNotFound extends ApiRes<Void> {}
 
 }

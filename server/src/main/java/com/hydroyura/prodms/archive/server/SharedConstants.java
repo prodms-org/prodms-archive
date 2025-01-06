@@ -12,7 +12,7 @@ public class SharedConstants {
 
     public static final String LOG_MSG_VALIDATION_NUMBER_BEGIN = "Start validation for number = [{}] and type = [{}]";
 
-    public static final String EX_MSG_UNIT_DELETE =
+    public static final String LOG_MSG_UNIT_DELETE_NOT_FOUND =
         "Can not delete unit with number = [%s]. Possible reasons are unit not exist or already deleted.";
     public static final String EX_MSG_UNIT_PATCH =
         "Can not patch unit with number = [%s]. Possible reasons are unit not exist or nothing to change.";
