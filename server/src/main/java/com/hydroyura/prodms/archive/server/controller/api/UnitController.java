@@ -4,8 +4,10 @@ import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_ATTR_U
 import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_TIMESTAMP_KEY;
 import static com.hydroyura.prodms.archive.server.SharedConstants.RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.hydroyura.prodms.archive.client.model.api.ApiRes;
+import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
 import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
@@ -23,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,6 +57,14 @@ public class UnitController implements UnitDocumentedController {
         return buildApiResponseOk(res, request);
     }
 
+    @Override
+    @RequestMapping(method = POST, value = "")
+    public ResponseEntity<ApiRes<Void>> create(@RequestBody CreateUnitReq req, HttpServletRequest request) {
+        validationManager.validate(req, CreateUnitReq.class);
+        unitService.create(req);
+        return buildApiResponseNotContent(request);
+    }
+
 
 
     private static <T> ResponseEntity<ApiRes<T>> buildApiResponseOkOrNotFound(Optional<T> data, HttpServletRequest req, Object number) {
@@ -81,6 +92,13 @@ public class UnitController implements UnitDocumentedController {
         apiResponse.setTimestamp(extractRequestTimestamp(req));
         apiResponse.setData(data);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    private static <T> ResponseEntity<ApiRes<T>> buildApiResponseNotContent(HttpServletRequest req) {
+        ApiRes<T> apiResponse = new ApiRes<>();
+        apiResponse.setId(extractRequestUUID(req));
+        apiResponse.setTimestamp(extractRequestTimestamp(req));
+        return new ResponseEntity<>(apiResponse, HttpStatus.NO_CONTENT);
     }
 
 
@@ -118,14 +136,6 @@ public class UnitController implements UnitDocumentedController {
 
 
     /*
-
-
-    @RequestMapping(method = POST, value = {"", "/"})
-    public ResponseEntity<ApiResponse<Void>> create(@RequestBody CreateUnitReq req, HttpServletRequest request) {
-        validationManager.validate(req, CreateUnitReq.class);
-        unitService.create(req);
-        return ResponseEntity.ok(buildApiResponse(null, request));
-    }
 
     @RequestMapping(method = DELETE, value = {"/{number}", "/{number}/"})
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String number, HttpServletRequest request) {

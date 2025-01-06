@@ -9,6 +9,7 @@ import lombok.experimental.UtilityClass;
 public class TestControllerUtils {
 
     public static final String UNIT_NUMBER_1 = "unit-number-1";
+    public static final String UNIT_NAME_1 = "unit-name-1";
 
 
 
