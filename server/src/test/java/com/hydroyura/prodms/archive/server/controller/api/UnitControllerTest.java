@@ -1,9 +1,11 @@
 package com.hydroyura.prodms.archive.server.controller.api;
 
 import static com.hydroyura.prodms.archive.server.controller.api.TestControllerUtils.MAP_TYPE_FOR_PARAMS;
+import static com.hydroyura.prodms.archive.server.controller.api.TestControllerUtils.UNIT_NAME_1;
 import static com.hydroyura.prodms.archive.server.controller.api.TestControllerUtils.UNIT_NUMBER_1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
 import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
@@ -43,6 +45,7 @@ class UnitControllerTest {
     @MockBean
     private UnitService unitService;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void get_OK() throws Exception {
@@ -133,8 +136,47 @@ class UnitControllerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @Test
+    void create_OK() throws Exception {
+        var req = new CreateUnitReq();
+        req.setName(UNIT_NAME_1);
+        req.setNumber(UNIT_NUMBER_1);
+
+        Mockito
+            .doNothing()
+            .when(unitService)
+            .create(req);
+
+        mockMvc
+            .perform(MockMvcRequestBuilders
+                .post("/api/v1/units")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    void create_BAD_REQUEST() throws Exception {
+        var req = new CreateUnitReq();
+        req.setName(UNIT_NAME_1);
+        req.setNumber(UNIT_NUMBER_1);
+
+        var errors = new SimpleErrors(req);
+
+        Mockito
+            .doThrow(new ValidationException(errors, "TEST MESSAGE"))
+            .when(validationManager)
+            .validate(req, CreateUnitReq.class);
+
+        mockMvc
+            .perform(MockMvcRequestBuilders
+                .post("/api/v1/units")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
     private MultiValueMap<String, String> getMultiValueMapFor(ListUnitsReq req) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
         var jsonString = objectMapper.writeValueAsString(req);
         Map<String, Object> map = objectMapper.readValue(jsonString, MAP_TYPE_FOR_PARAMS);
         Map<String, List<String>> convertedMap = map.entrySet()

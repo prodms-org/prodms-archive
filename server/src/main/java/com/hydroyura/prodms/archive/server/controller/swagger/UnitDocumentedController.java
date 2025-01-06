@@ -1,6 +1,7 @@
 package com.hydroyura.prodms.archive.server.controller.swagger;
 
 import com.hydroyura.prodms.archive.client.model.api.ApiRes;
+import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
 import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
@@ -15,6 +16,7 @@ import java.util.List;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 public interface UnitDocumentedController {
 
@@ -58,5 +60,23 @@ public interface UnitDocumentedController {
 
     class ApiResListUnitsResSuccess extends ApiRes<ListUnitsRes> {}
     class ApiResListUnitsResBadRequest extends ApiRes<Void> {}
+
+
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "201",
+            content = { @Content(schema = @Schema(implementation = ApiResCreateUnitSuccess.class)) },
+            description = "Unit was created successful"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            content = { @Content(schema = @Schema(implementation = ApiResCreateUnitBadRequest.class)) },
+            description = "Can't create unit with given data"
+        )
+    })
+    ResponseEntity<ApiRes<Void>> create(@RequestBody CreateUnitReq req, HttpServletRequest request);
+
+    class ApiResCreateUnitSuccess extends ApiRes<Void> {}
+    class ApiResCreateUnitBadRequest extends ApiRes<Void> {}
 
 }
