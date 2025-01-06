@@ -5,11 +5,13 @@ import static com.hydroyura.prodms.archive.server.SharedConstants.REQUEST_TIMEST
 import static com.hydroyura.prodms.archive.server.SharedConstants.RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.hydroyura.prodms.archive.client.model.api.ApiRes;
 import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
+import com.hydroyura.prodms.archive.client.model.req.PatchUnitReq;
 import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
 import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
 import com.hydroyura.prodms.archive.server.controller.swagger.UnitDocumentedController;
@@ -17,6 +19,7 @@ import com.hydroyura.prodms.archive.server.service.UnitService;
 import com.hydroyura.prodms.archive.server.validation.ValidationManager;
 import com.hydroyura.prodms.archive.server.validation.enums.NumberKey;
 import com.hydroyura.prodms.archive.server.validation.model.WrapNumber;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.Optional;
@@ -74,6 +77,15 @@ public class UnitController implements UnitDocumentedController {
         return buildApiResponseNotContentOrNotFound(result.isPresent(), request, number);
     }
 
+    @Override
+    @RequestMapping(method = PATCH, value = "/{number}")
+    public ResponseEntity<ApiRes<Void>> patch(@PathVariable String number,
+                                              @RequestBody PatchUnitReq req,
+                                              HttpServletRequest request) {
+        validationManager.validate(req, PatchUnitReq.class);
+        var result = unitService.patch(number, req);
+        return buildApiResponseNotContentOrNotFound(result.isPresent(), request, number);
+    }
 
     private static <T> ResponseEntity<ApiRes<T>> buildApiResponseOkOrNotFound(Optional<T> data, HttpServletRequest req, Object number) {
         ApiRes<T> apiResponse = new ApiRes<>();
@@ -139,47 +151,4 @@ public class UnitController implements UnitDocumentedController {
             .orElseThrow(RuntimeException::new);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-
-
-
-    @RequestMapping(method = PATCH, value = {"/{number}", "/{number}/"})
-    public ResponseEntity<ApiResponse<Void>> patch(@PathVariable String number,
-                                                   @RequestBody PatchUnitReq req,
-                                                   HttpServletRequest request) {
-        validationManager.validate(req, PatchUnitReq.class);
-        unitService.patch(number, req);
-        return ResponseEntity.ok(buildApiResponse(null, request));
-    }
-
-
-
-
-    private static <T> ApiResponse<T> buildApiResponse(T res, HttpServletRequest request) {
-        ApiResponse<T> apiRes = new ApiResponse<>();
-        apiRes.setData(res);
-        apiRes.setId(extractRequestUUID(request));
-        apiRes.setTimestamp(extractRequestTimestamp(request));
-        return apiRes;
-    }
-    */
 }
