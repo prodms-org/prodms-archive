@@ -115,20 +115,23 @@ public class UnitService {
         return unitRepository.get(number).map(unitToGetUnitResMapper::toDestination);
     }
 
-    public void patch(String number, PatchUnitReq req) {
+    // TODO: refactoring it, need to remove optional.get()
+    public Optional<String> patch(String number, PatchUnitReq req) {
         EntityTransaction transaction = entityManagerProvider.getTransaction();
         try {
             transaction.begin();
-            var pachedUnit = unitRepository.get(number)
-                .map(unit -> populateExistentUnitWithNewValues(unit, req))
-                // TODO: custom ex
-                .orElseThrow(() -> new RuntimeException("Ex"));
-            patchUnitAndSaveHistory(pachedUnit);
-            transaction.commit();
+            var patchedUnit = unitRepository.get(number)
+                .map(unit -> populateExistentUnitWithNewValues(unit, req));
+            if (patchedUnit.isPresent()) {
+                patchUnitAndSaveHistory(patchedUnit.get());
+                transaction.commit();
+                return Optional.of(number);
+            } else {
+                return Optional.empty();
+            }
         } catch (Exception e) {
             transaction.rollback();
-            //TODO: create custom ex
-            throw new RuntimeException();
+            return Optional.empty();
         }
     }
 

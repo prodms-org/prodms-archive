@@ -7,6 +7,7 @@ import static com.hydroyura.prodms.archive.server.controller.api.TestControllerU
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
+import com.hydroyura.prodms.archive.client.model.req.PatchUnitReq;
 import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
 import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
 import com.hydroyura.prodms.archive.server.exception.model.ValidationException;
@@ -215,6 +216,59 @@ class UnitControllerTest {
             .perform(MockMvcRequestBuilders
                 .delete("/api/v1/units/" + UNIT_NUMBER_1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void patch_OK() throws Exception {
+        var req = new PatchUnitReq();
+        req.setName("TEST NAME");
+        req.setStatus(1);
+        Mockito
+            .when(unitService.patch(UNIT_NUMBER_1, req))
+            .thenReturn(Optional.of(UNIT_NUMBER_1));
+
+        mockMvc
+            .perform(MockMvcRequestBuilders
+                .patch("/api/v1/units/" + UNIT_NUMBER_1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(req)))
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    void patch_NOT_FOUND() throws Exception {
+        var req = new PatchUnitReq();
+        req.setName("TEST NAME");
+        req.setStatus(1);
+        Mockito
+            .when(unitService.patch(UNIT_NUMBER_1, req))
+            .thenReturn(Optional.empty());
+
+        mockMvc
+            .perform(MockMvcRequestBuilders
+                .patch("/api/v1/units/" + UNIT_NUMBER_1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(req)))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    void patch_BAD_REQUEST() throws Exception {
+        var req = new PatchUnitReq();
+        req.setName("TEST NAME");
+        req.setStatus(1);
+        var errors = new SimpleErrors(req);
+        Mockito
+            .doThrow(new ValidationException(errors, "TEST MESSAGE"))
+            .when(validationManager)
+            .validate(req, PatchUnitReq.class);
+
+        mockMvc
+            .perform(MockMvcRequestBuilders
+                .patch("/api/v1/units/" + UNIT_NUMBER_1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(req)))
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
