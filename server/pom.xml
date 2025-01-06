@@ -119,6 +119,14 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.hydroyura.prodms.archive.server.Server</mainClass>
+                    <layout>JAR</layout>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
