@@ -35,15 +35,15 @@ public class BatchConfig extends DefaultBatchConfiguration {
         return new UnitWriter(unitService);
     }
 
-    @Bean
-    DataSource dataSource() {
-        var dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.url("jdbc:postgresql://localhost:5432/archive");
-        dataSourceBuilder.password("pg-pwd");
-        dataSourceBuilder.driverClassName("org.postgresql.Driver");
-        dataSourceBuilder.username("pg-user");
-        return dataSourceBuilder.build();
-    }
+//    @Bean
+//    DataSource dataSource() {
+//        var dataSourceBuilder = DataSourceBuilder.create();
+//        dataSourceBuilder.url("jdbc:postgresql://localhost:5432/archive");
+//        dataSourceBuilder.password("pg-pwd");
+//        dataSourceBuilder.driverClassName("org.postgresql.Driver");
+//        dataSourceBuilder.username("pg-user");
+//        return dataSourceBuilder.build();
+//    }
 
 
     @Bean
