@@ -29,3 +29,9 @@ spring:
     job:
       enabled: false
 
+db:
+  url: ${DB_URL:postgres.prodms.svc:5432}
+  user: ${DB_USER:pg-user}
+  pwd: ${DB_PWD:pg-pwd}
+  name: ${DB_NAME:archive}
+  entityRootPackage: ${DB_ENTITY_ROOT_PACKAGE:com.hydroyura.proms.archive.server.db.entity}

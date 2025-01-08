@@ -75,7 +75,7 @@ spec:
             claimName: postgres-volume-claim
 
 # https://www.digitalocean.com/community/tutorials/how-to-deploy-postgres-to-kubernetes-cluster
-# helm install test-release github-own-repo/prodms --set image.repository=docker.io/library/prodms-archive --set image.tag=1.1 --set replicaCount=3
+# helm install test-release --namespace prodms github-own-repo/prodms --set image.repository=docker.io/library/prodms-archive --set image.tag=1.1 --set replicaCount=1
 # helm repo add github-own-repo https://yuryklimchuk.github.io/helm-charts
 # helm repo list
 # helm search repo github-own-repo
@@ -89,8 +89,9 @@ metadata:
   labels:
     app: postgres
 spec:
-  type: NodePort
   ports:
-    - port: 5432
+    - name: http
+      port: 5432
+      targetPort: 5432
   selector:
     app: postgres
