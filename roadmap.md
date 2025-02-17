@@ -9,9 +9,9 @@
 + DELETE /api/v1/units/{number} - delete unit
 + PATCH /api/v1/units/{number} - update unit
 #### rates
-+ GET /api/v1/rates/{assembly} - get assembly
-+ GET /api/v1/rates/{assembly}?extended=true - get extended assembly
-+ POST /api/v1/rates - create new rate
++ GET /api/v1/rates/{assembly} - get specification
++ GET /api/v1/rates/{assembly}?extended=true - get plain specification
++ POST /api/v1/rates/{assembly} - create new rate
 + DELETE /api/v1/rates/{assembly}/{unit} - delete rate
 + PATCH /api/v1/rates/{assembly}/{unit} - update rate
 
