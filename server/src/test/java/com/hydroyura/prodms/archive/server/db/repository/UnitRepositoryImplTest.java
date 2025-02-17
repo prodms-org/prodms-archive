@@ -345,7 +345,7 @@ class UnitRepositoryImplTest {
 
         var filter4 = new ListUnitsReq();
         filter4.setItemsPerPage(10);
-        filter4.setTypeIn(List.of("BUY"));
+        filter4.setTypeIn(List.of("VZK"));
         Collection<Unit> result4 = unitRepository.list(filter4);
         assertEquals(0, result4.size());
     }

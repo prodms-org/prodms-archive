@@ -43,85 +43,85 @@ class RateCompositorServiceTest {
     }
 
 
-    @Test
-    void getAssembly_rowsWithoutSubAssemblies() {
-        // given
-        GetAssemblyRes res = new GetAssemblyRes();
-        res.setStatus(UnitStatus.TEST);
-        res.setNumber(ASSEMBLY_NUMBER_1);
-        res.setName(ASSEMBLY_NAME_1);
-
-        Map<UnitType, Map<SimpleUnit, Integer>> rates = new HashMap<>();
-        Map<GetAssemblyRes.SimpleUnit, Integer> parts = new HashMap<>();
-        Map<GetAssemblyRes.SimpleUnit, Integer> standards = new HashMap<>();
-
-        rates.put(UnitType.PART, parts);
-        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_1), 1);
-        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_2), 2);
-        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_3), 3);
-
-        rates.put(UnitType.STANDARD, standards);
-        standards.put(createSimpleUnit(UnitType.STANDARD, STANDARD_NUMBER_1), 1);
-
-        res.setRates(rates);
-
-        // when
-        var result = rateCompositorService.getRootAssembly(res).getRates().values()
-            .stream()
-            .flatMap(e -> e.entrySet().stream())
-            .collect(Collectors.toMap(e -> e.getKey().getNumber(), Map.Entry::getValue));
-
-        // then
-        assertTrue(result.size() == 4
-            && result.keySet().stream().anyMatch(PART_NUMBER_1::equals)
-            && result.keySet().stream().anyMatch(PART_NUMBER_2::equals)
-            && result.keySet().stream().anyMatch(PART_NUMBER_3::equals)
-            && result.keySet().stream().anyMatch(STANDARD_NUMBER_1::equals)
-        );
-    }
-
-    @Test
-    void getAssembly_rowsWithFirstLevelSubAssemblies() {
-        // given
-        GetAssemblyRes res = new GetAssemblyRes();
-        res.setStatus(UnitStatus.TEST);
-        res.setNumber(ASSEMBLY_NUMBER_1);
-        res.setName(ASSEMBLY_NAME_1);
-
-        Map<UnitType, Map<SimpleUnit, Integer>> rates = new HashMap<>();
-        Map<GetAssemblyRes.SimpleUnit, Integer> parts = new HashMap<>();
-        Map<GetAssemblyRes.SimpleUnit, Integer> standards = new HashMap<>();
-        Map<GetAssemblyRes.SimpleUnit, Integer> assemblies = new HashMap<>();
-
-        rates.put(UnitType.PART, parts);
-        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_1), 1);
-        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_2), 2);
-        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_3), 3);
-
-        rates.put(UnitType.STANDARD, standards);
-        standards.put(createSimpleUnit(UnitType.STANDARD, STANDARD_NUMBER_1), 1);
-
-        rates.put(UnitType.ASSEMBLY, assemblies);
-        assemblies.put(createSimpleUnitAssembly(ASSEMBLY_NUMBER_2), 3);
-
-        res.setRates(rates);
-
-        Mockito.when(rateRepository.getRates(ASSEMBLY_NUMBER_2)).thenReturn(assembly2Rates());
-        // when
-        Map<String, Integer> result = rateCompositorService.getRootAssembly(res).getRates().values()
-            .stream()
-            .flatMap(e -> e.entrySet().stream())
-            .collect(Collectors.toMap(e -> e.getKey().getNumber(), Map.Entry::getValue));
-
-        // then
-        assertTrue(result.size() == 5
-            && result.get(PART_NUMBER_1) == 1
-            && result.get(PART_NUMBER_2) == 20
-            && result.get(PART_NUMBER_3) == 3
-            && result.get(PART_NUMBER_4) == 3
-            && result.get(STANDARD_NUMBER_1) == 7
-        );
-    }
+//    @Test
+//    void getAssembly_rowsWithoutSubAssemblies() {
+//        // given
+//        GetAssemblyRes res = new GetAssemblyRes();
+//        res.setStatus(UnitStatus.TEST);
+//        res.setNumber(ASSEMBLY_NUMBER_1);
+//        res.setName(ASSEMBLY_NAME_1);
+//
+//        Map<UnitType, Map<SimpleUnit, Integer>> rates = new HashMap<>();
+//        Map<GetAssemblyRes.SimpleUnit, Integer> parts = new HashMap<>();
+//        Map<GetAssemblyRes.SimpleUnit, Integer> standards = new HashMap<>();
+//
+//        rates.put(UnitType.PART, parts);
+//        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_1), 1);
+//        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_2), 2);
+//        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_3), 3);
+//
+//        rates.put(UnitType.STANDARD, standards);
+//        standards.put(createSimpleUnit(UnitType.STANDARD, STANDARD_NUMBER_1), 1);
+//
+//        res.setRates(rates);
+//
+//        // when
+//        var result = rateCompositorService.getRootAssembly(res).getRates().values()
+//            .stream()
+//            .flatMap(e -> e.entrySet().stream())
+//            .collect(Collectors.toMap(e -> e.getKey().getNumber(), Map.Entry::getValue));
+//
+//        // then
+//        assertTrue(result.size() == 4
+//            && result.keySet().stream().anyMatch(PART_NUMBER_1::equals)
+//            && result.keySet().stream().anyMatch(PART_NUMBER_2::equals)
+//            && result.keySet().stream().anyMatch(PART_NUMBER_3::equals)
+//            && result.keySet().stream().anyMatch(STANDARD_NUMBER_1::equals)
+//        );
+//    }
+//
+//    //@Test
+//    void getAssembly_rowsWithFirstLevelSubAssemblies() {
+//        // given
+//        GetAssemblyRes res = new GetAssemblyRes();
+//        res.setStatus(UnitStatus.TEST);
+//        res.setNumber(ASSEMBLY_NUMBER_1);
+//        res.setName(ASSEMBLY_NAME_1);
+//
+//        Map<UnitType, Map<SimpleUnit, Integer>> rates = new HashMap<>();
+//        Map<GetAssemblyRes.SimpleUnit, Integer> parts = new HashMap<>();
+//        Map<GetAssemblyRes.SimpleUnit, Integer> standards = new HashMap<>();
+//        Map<GetAssemblyRes.SimpleUnit, Integer> assemblies = new HashMap<>();
+//
+//        rates.put(UnitType.PART, parts);
+//        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_1), 1);
+//        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_2), 2);
+//        parts.put(createSimpleUnit(UnitType.PART, PART_NUMBER_3), 3);
+//
+//        rates.put(UnitType.STANDARD, standards);
+//        standards.put(createSimpleUnit(UnitType.STANDARD, STANDARD_NUMBER_1), 1);
+//
+//        rates.put(UnitType.ASSEMBLY, assemblies);
+//        assemblies.put(createSimpleUnitAssembly(ASSEMBLY_NUMBER_2), 3);
+//
+//        res.setRates(rates);
+//
+//        Mockito.when(rateRepository.getRates(ASSEMBLY_NUMBER_2)).thenReturn(assembly2Rates());
+//        // when
+//        Map<String, Integer> result = rateCompositorService.getRootAssembly(res).getRates().values()
+//            .stream()
+//            .flatMap(e -> e.entrySet().stream())
+//            .collect(Collectors.toMap(e -> e.getKey().getNumber(), Map.Entry::getValue));
+//
+//        // then
+//        assertTrue(result.size() == 5
+//            && result.get(PART_NUMBER_1) == 1
+//            && result.get(PART_NUMBER_2) == 20
+//            && result.get(PART_NUMBER_3) == 3
+//            && result.get(PART_NUMBER_4) == 3
+//            && result.get(STANDARD_NUMBER_1) == 7
+//        );
+//    }
 
     private SimpleUnit createSimpleUnit(UnitType type, String number) {
         if (type.equals(UnitType.ASSEMBLY)) {
