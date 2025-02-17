@@ -34,7 +34,7 @@ public interface UnitDocumentedController {
             description = "Unit with getting number doesn't exist"
         )
     })
-    ResponseEntity<ApiRes<GetUnitRes>> get(@PathVariable String number, HttpServletRequest request);
+    ResponseEntity<ApiRes<?>> get(@PathVariable String number, HttpServletRequest request);
 
     class ApiResGetUnitResSuccess extends ApiRes<GetUnitRes> {
     }
@@ -58,7 +58,7 @@ public interface UnitDocumentedController {
             description = "Filter values isn't valid"
         )
     })
-    ResponseEntity<ApiRes<ListUnitsRes>> list(ListUnitsReq req, HttpServletRequest request);
+    ResponseEntity<ApiRes<?>> list(ListUnitsReq req, HttpServletRequest request);
 
     class ApiResListUnitsResSuccess extends ApiRes<ListUnitsRes> {
     }
