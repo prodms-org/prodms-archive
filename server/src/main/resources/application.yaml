@@ -1,0 +1,37 @@
+hibernate:
+  enable_lazy_load: true
+
+validation:
+  enabled: true
+  createUnit:
+    numberRegex: ^(?=.{3,20}$)[a-zA-Z0-9]+$
+    nameRegex: ^(?=.{3,20}$)[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*$
+  number:
+    unitRegex: ^(?=.{3,20}$)[a-zA-Z0-9\-\\\/]+$
+
+batch:
+  workers:
+    poolSize: 5
+
+
+filters:
+  defaults:
+    listUnit:
+      pageNum: 0
+      itemsPerPage: 20
+      sortCode: 0
+
+
+spring:
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+db:
+  url: ${DB_URL:postgres.prodms.svc:5432}
+  user: ${DB_USER:pg-user}
+  pwd: ${DB_PWD:pg-pwd}
+  name: ${DB_NAME:archive}
+  entityRootPackage: ${DB_ENTITY_ROOT_PACKAGE:com.hydroyura.proms.archive.server.db.entity}

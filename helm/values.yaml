@@ -1,0 +1,20 @@
+basicEnabled: true
+basic:
+  replicaCount: 1
+  
+  image:
+    repository: "ghcr.io/yuryklimchuk"
+    tag: "prodms/archive-server"
+    version: "1.0.0-SNAPSHOT"
+    pullPolicy: IfNotPresent
+  
+  app:
+    id: "archive"
+    port: 8080
+
+db:
+  pwd: 2mvaLA56PAqPzfqdYUHaFNKuyLwI9yiso2gPVVDq3nv6CyJ6Xvuz2zMgAgfM1rcF
+  url: prodms-postgres-archive-cluster-rw.prodms-infra:5432
+  user: pg-user
+  name: archive
+  entityRootPackage: root-pack-my
