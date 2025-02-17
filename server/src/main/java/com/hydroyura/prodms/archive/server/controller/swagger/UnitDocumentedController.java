@@ -69,7 +69,7 @@ public interface UnitDocumentedController {
 
     @ApiResponses({
         @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             content = {@Content(schema = @Schema(implementation = ApiResCreateUnitSuccess.class))},
             description = "Unit was created successful"
         ),
@@ -79,7 +79,7 @@ public interface UnitDocumentedController {
             description = "Can't create unit with given data"
         )
     })
-    ResponseEntity<ApiRes<Void>> create(@RequestBody CreateUnitReq req, HttpServletRequest request);
+    ResponseEntity<ApiRes<?>> create(@RequestBody CreateUnitReq req, HttpServletRequest request);
 
     class ApiResCreateUnitSuccess extends ApiRes<Void> {
     }
@@ -90,7 +90,7 @@ public interface UnitDocumentedController {
 
     @ApiResponses({
         @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             content = {@Content(schema = @Schema(implementation = ApiResDeleteUnitSuccess.class))},
             description = "Unit was deleted successful"
         ),
@@ -105,7 +105,7 @@ public interface UnitDocumentedController {
             description = "Unit with getting number doesn't exist"
         )
     })
-    ResponseEntity<ApiRes<Void>> delete(@PathVariable String number, HttpServletRequest request);
+    ResponseEntity<ApiRes<?>> delete(@PathVariable String number, HttpServletRequest request);
 
     class ApiResDeleteUnitSuccess extends ApiRes<Void> {
     }
@@ -118,7 +118,7 @@ public interface UnitDocumentedController {
 
     @ApiResponses({
         @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             content = {@Content(schema = @Schema(implementation = ApiResPatchUnitSuccess.class))},
             description = "Unit was patched successful"
         ),
@@ -133,7 +133,7 @@ public interface UnitDocumentedController {
             description = "Unit with getting number doesn't exist"
         )
     })
-    ResponseEntity<ApiRes<Void>> patch(@PathVariable String number,
+    ResponseEntity<ApiRes<?>> patch(@PathVariable String number,
                                        @RequestBody PatchUnitReq req,
                                        HttpServletRequest request);
     class ApiResPatchUnitSuccess extends ApiRes<Void> {
