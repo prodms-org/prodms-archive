@@ -5,13 +5,12 @@ import lombok.Getter;
 @Getter
 public enum UnitType {
 
-    PART(1), ASSEMBLY(2), BUY(3), STANDARD(4), OTHER(5);
+    PART(1), ASSEMBLY(2), VZK(3), OTHER(4);
 
     UnitType(Integer code) {
         this.code = code;
     }
 
-    //@JsonValue
     private final Integer code;
 
 }

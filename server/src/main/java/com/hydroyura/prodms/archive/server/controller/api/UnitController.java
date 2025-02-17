@@ -12,8 +12,6 @@ import com.hydroyura.prodms.archive.client.model.api.ApiRes;
 import com.hydroyura.prodms.archive.client.model.req.CreateUnitReq;
 import com.hydroyura.prodms.archive.client.model.req.ListUnitsReq;
 import com.hydroyura.prodms.archive.client.model.req.PatchUnitReq;
-import com.hydroyura.prodms.archive.client.model.res.GetUnitRes;
-import com.hydroyura.prodms.archive.client.model.res.ListUnitsRes;
 import com.hydroyura.prodms.archive.server.controller.swagger.UnitDocumentedController;
 import com.hydroyura.prodms.archive.server.service.UnitService;
 import com.hydroyura.prodms.archive.server.validation.ValidationManager;
@@ -46,101 +44,74 @@ public class UnitController implements UnitDocumentedController {
 
     @Override
     @RequestMapping(method = GET, value = "/{number}")
-    public ResponseEntity<ApiRes<GetUnitRes>> get(@PathVariable String number, HttpServletRequest request) {
-        validationManager.validate(new WrapNumber(number, String.class, NumberKey.UNIT), WrapNumber.class);
-        var res = unitService.get(number);
-        return buildApiResponseOkOrNotFound(res, request, number);
+    public ResponseEntity<ApiRes<?>> get(@PathVariable String number, HttpServletRequest request) {
+        validationManager.validate(new WrapNumber<>(number, String.class, NumberKey.UNIT), WrapNumber.class);
+        var body = buildApiRes(request);
+        var data = unitService.get(number);
+        if (data.isPresent()) {
+            body.setData(data.get());
+            return new ResponseEntity<>(body, HttpStatus.OK);
+        } else {
+            body.getErrors().add(RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND.formatted(number));
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
     @RequestMapping(method = GET, value = "")
-    public ResponseEntity<ApiRes<ListUnitsRes>> list(ListUnitsReq req, HttpServletRequest request) {
+    public ResponseEntity<ApiRes<?>> list(ListUnitsReq req, HttpServletRequest request) {
         validationManager.validate(req, ListUnitsReq.class);
+        var body = buildApiRes(request);
         var res = unitService.list(req);
-        return buildApiResponseOk(res, request);
+        body.setData(res);
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @Override
     @RequestMapping(method = POST, value = "")
-    public ResponseEntity<ApiRes<Void>> create(@RequestBody CreateUnitReq req, HttpServletRequest request) {
+    public ResponseEntity<ApiRes<?>> create(@RequestBody CreateUnitReq req, HttpServletRequest request) {
         validationManager.validate(req, CreateUnitReq.class);
+        var body = buildApiRes(request);
         unitService.create(req);
-        return buildApiResponseNotContent(request);
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @Override
     @RequestMapping(method = DELETE, value = "/{number}")
-    public ResponseEntity<ApiRes<Void>> delete(@PathVariable String number, HttpServletRequest request) {
-        validationManager.validate(new WrapNumber(number, String.class, NumberKey.UNIT), WrapNumber.class);
-        var result = unitService.delete(number);
-        return buildApiResponseNotContentOrNotFound(result.isPresent(), request, number);
+    public ResponseEntity<ApiRes<?>> delete(@PathVariable String number, HttpServletRequest request) {
+        validationManager.validate(new WrapNumber<>(number, String.class, NumberKey.UNIT), WrapNumber.class);
+        var body = buildApiRes(request);
+        var data = unitService.delete(number);
+        if (data.isPresent()) {
+            return new ResponseEntity<>(body, HttpStatus.OK);
+        } else {
+            body.getErrors().add(RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND.formatted(number));
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
     @RequestMapping(method = PATCH, value = "/{number}")
-    public ResponseEntity<ApiRes<Void>> patch(@PathVariable String number,
+    public ResponseEntity<ApiRes<?>> patch(@PathVariable String number,
                                               @RequestBody PatchUnitReq req,
                                               HttpServletRequest request) {
         validationManager.validate(req, PatchUnitReq.class);
-        var result = unitService.patch(number, req);
-        return buildApiResponseNotContentOrNotFound(result.isPresent(), request, number);
-    }
-
-    private static <T> ResponseEntity<ApiRes<T>> buildApiResponseOkOrNotFound(Optional<T> data, HttpServletRequest req, Object number) {
-        ApiRes<T> apiResponse = new ApiRes<>();
-        apiResponse.setId(extractRequestUUID(req));
-        apiResponse.setTimestamp(extractRequestTimestamp(req));
-        data.ifPresentOrElse(
-            apiResponse::setData,
-            () -> apiResponse.getErrors().add(RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND.formatted(number))
-        );
-
-        ResponseEntity<ApiRes<T>> responseEntity;
+        var body = buildApiRes(request);
+        var data = unitService.patch(number, req);
         if (data.isPresent()) {
-            responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+            return new ResponseEntity<>(body, HttpStatus.OK);
         } else {
-            responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+            body.getErrors().add(RESPONSE_ERROR_MSG_ENTITY_NOT_FOUND.formatted(number));
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
-
-        return responseEntity;
-    }
-
-    private static ResponseEntity<ApiRes<Void>> buildApiResponseNotContentOrNotFound(Boolean flag, HttpServletRequest req, Object number) {
-        ApiRes<Void> apiResponse = new ApiRes<>();
-        apiResponse.setId(extractRequestUUID(req));
-        apiResponse.setTimestamp(extractRequestTimestamp(req));
-
-        ResponseEntity<ApiRes<Void>> responseEntity;
-        if (flag) {
-            responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.NO_CONTENT);
-        } else {
-            responseEntity = new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
-        }
-
-        return responseEntity;
-    }
-
-    private static <T> ResponseEntity<ApiRes<T>> buildApiResponseOk(T data, HttpServletRequest req) {
-        ApiRes<T> apiResponse = new ApiRes<>();
-        apiResponse.setId(extractRequestUUID(req));
-        apiResponse.setTimestamp(extractRequestTimestamp(req));
-        apiResponse.setData(data);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    }
-
-    private static <T> ResponseEntity<ApiRes<T>> buildApiResponseNotContent(HttpServletRequest req) {
-        ApiRes<T> apiResponse = new ApiRes<>();
-        apiResponse.setId(extractRequestUUID(req));
-        apiResponse.setTimestamp(extractRequestTimestamp(req));
-        return new ResponseEntity<>(apiResponse, HttpStatus.NO_CONTENT);
     }
 
 
     private static UUID extractRequestUUID(HttpServletRequest request) {
-    return Optional
-        .ofNullable(request.getAttribute(REQUEST_ATTR_UUID_KEY))
-        .map(UUID.class::cast)
-        .orElseThrow(RuntimeException::new);
+        return Optional
+            .ofNullable(request.getAttribute(REQUEST_ATTR_UUID_KEY))
+            .map(UUID.class::cast)
+            .orElseThrow(RuntimeException::new);
     }
 
     private static Timestamp extractRequestTimestamp(HttpServletRequest request) {
@@ -148,6 +119,13 @@ public class UnitController implements UnitDocumentedController {
             .ofNullable(request.getAttribute(REQUEST_TIMESTAMP_KEY))
             .map(Timestamp.class::cast)
             .orElseThrow(RuntimeException::new);
+    }
+
+    private static <T> ApiRes<T> buildApiRes(HttpServletRequest request) {
+        ApiRes<T> apiRes = new ApiRes<>();
+        apiRes.setId(extractRequestUUID(request));
+        apiRes.setTimestamp(extractRequestTimestamp(request));
+        return apiRes;
     }
 
 }
