@@ -76,7 +76,7 @@ class UnitControllerTest {
 
     @Test
     void get_BAD_REQUEST() throws Exception {
-        var wrapNumber = new WrapNumber(UNIT_NUMBER_1, String.class, NumberKey.UNIT);
+        var wrapNumber = new WrapNumber<>(UNIT_NUMBER_1, String.class, NumberKey.UNIT);
         var errors = new SimpleErrors(wrapNumber);
         Mockito
             .doThrow(new ValidationException(errors, "TEST MESSAGE"))
@@ -153,7 +153,7 @@ class UnitControllerTest {
                 .post("/api/v1/units")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
-            .andExpect(MockMvcResultMatchers.status().isNoContent());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -187,7 +187,7 @@ class UnitControllerTest {
             .perform(MockMvcRequestBuilders
                 .delete("/api/v1/units/" + UNIT_NUMBER_1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(MockMvcResultMatchers.status().isNoContent());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -205,7 +205,7 @@ class UnitControllerTest {
 
     @Test
     void delete_BAD_REQUEST() throws Exception {
-        var wrapNumber = new WrapNumber(UNIT_NUMBER_1, String.class, NumberKey.UNIT);
+        var wrapNumber = new WrapNumber<>(UNIT_NUMBER_1, String.class, NumberKey.UNIT);
         var errors = new SimpleErrors(wrapNumber);
         Mockito
             .doThrow(new ValidationException(errors, "TEST MESSAGE"))
@@ -233,7 +233,7 @@ class UnitControllerTest {
                 .patch("/api/v1/units/" + UNIT_NUMBER_1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(req)))
-            .andExpect(MockMvcResultMatchers.status().isNoContent());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -272,6 +272,7 @@ class UnitControllerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @SuppressWarnings("unchecked")
     private MultiValueMap<String, String> getMultiValueMapFor(ListUnitsReq req) throws Exception {
         var jsonString = objectMapper.writeValueAsString(req);
         Map<String, Object> map = objectMapper.readValue(jsonString, MAP_TYPE_FOR_PARAMS);
