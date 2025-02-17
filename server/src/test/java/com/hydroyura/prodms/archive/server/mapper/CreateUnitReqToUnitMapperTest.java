@@ -14,7 +14,7 @@ class CreateUnitReqToUnitMapperTest {
 
     @Test
     void mapTest() {
-        var type = UnitType.BUY;
+        var type = UnitType.PART;
         var status = UnitStatus.TEST;
         var name = "NAME";
         var number = "NUMBER";
