@@ -5,11 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.Collection;
 import lombok.Data;
-import org.hibernate.annotations.LazyGroup;
 
 @Data
 @Entity
@@ -34,11 +34,14 @@ public class Unit {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "number")
     private Collection<UnitHist> history;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "assembly")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "assembly")
     private Collection<Rate> useIn;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_number")
+    private Unit parent;
 }
