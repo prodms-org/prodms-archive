@@ -6,6 +6,5 @@ metadata:
 data:
   DB_URL: {{ required "'db.url' parameter is required" .Values.db.url | quote }}
   DB_USER: {{ required "'db.user' parameter is required" .Values.db.user | quote }}
-  DB_PWD: {{ required "'db.pwd' parameter is required" .Values.db.pwd | quote }}
   DB_NAME: {{ required "'db.name' parameter is required" .Values.db.name | quote }}
   DB_ENTITY_ROOT_PACKAGE: {{ required "'db.entityRootPackage' parameter is required" .Values.db.entityRootPackage | quote }}

@@ -12,9 +12,15 @@ basic:
     id: "archive"
     port: 8080
 
+  env:
+    valuesFromSecretRef:
+      - name: DB_PWD
+        secretName: prodms-postgres-archive-cluster-app
+        key: password
+
+
 db:
-  pwd: 2mvaLA56PAqPzfqdYUHaFNKuyLwI9yiso2gPVVDq3nv6CyJ6Xvuz2zMgAgfM1rcF
-  url: prodms-postgres-archive-cluster-rw.prodms-infra:5432
+  url: prodms-postgres-archive-cluster-rw.prodms:5432
   user: pg-user
   name: archive
   entityRootPackage: root-pack-my
