@@ -156,13 +156,19 @@ class UnitRepositoryImplTest {
 
     @Test
     void delete_notExistent() {
-        assertTrue(unitRepository.delete(UNIT_NUMBER_1).isEmpty());
+        entityManagerProvider.getTransaction().begin();
+        var result = unitRepository.delete(UNIT_NUMBER_1);
+        entityManagerProvider.getTransaction().commit();
+        assertTrue(result.isEmpty());
     }
 
     @Test
     void delete_notActive() throws Exception {
         TEST_DB_CONTAINER.execInContainer("bash", "-c", UNIT_SQL_CREATE_NUMBER_1_NOT_ACTIVE);
-        assertTrue(unitRepository.delete(UNIT_NUMBER_1).isEmpty());
+        entityManagerProvider.getTransaction().begin();
+        var result = unitRepository.delete(UNIT_NUMBER_1);
+        entityManagerProvider.getTransaction().commit();
+        assertTrue(result.isEmpty());
     }
 
     @Test

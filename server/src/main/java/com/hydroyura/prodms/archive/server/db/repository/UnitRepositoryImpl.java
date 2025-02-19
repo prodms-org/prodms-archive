@@ -39,7 +39,7 @@ public class UnitRepositoryImpl implements UnitRepository {
         entityManagerProvider.getEntityManager().persist(unit);
     }
 
-    @Override
+/*    @Override
     public Optional<Unit> get(String number) {
         try {
             CriteriaBuilder criteriaBuilder = entityManagerProvider.getEntityManager().getCriteriaBuilder();
@@ -58,9 +58,24 @@ public class UnitRepositoryImpl implements UnitRepository {
             log.warn(LOG_MSG_UNIT_NOT_FOUND, number);
             return Optional.empty();
         }
-    }
+    }*/
 
     @Override
+    public Optional<Unit> get(String number) {
+        String hql = "SELECT u FROM Unit u LEFT JOIN u.history h WHERE u.number = :number AND u.isActive = :isActive";
+        try {
+            var unit = entityManagerProvider.getEntityManager().createQuery(hql, Unit.class)
+                .setParameter("number", number)
+                .setParameter("isActive", Boolean.TRUE)
+                .getSingleResult();
+            return Optional.of(unit);
+        } catch (NoResultException ex) {
+            log.warn(LOG_MSG_UNIT_NOT_FOUND, number);
+            return Optional.empty();
+        }
+    }
+
+/*    @Override
     public Optional<String> delete(String number) {
         return get(number)
             .map(u -> {
@@ -71,6 +86,35 @@ public class UnitRepositoryImpl implements UnitRepository {
             })
             .map(entityManagerProvider.getEntityManager()::merge)
             .map(Unit::getNumber);
+    }*/
+
+    @Override
+    public Optional<String> delete(String number) {
+        var updatedAt = Instant.now().getEpochSecond();
+        String hql = """
+            UPDATE Unit u
+                SET u.updatedAt = :updatedAt,
+                    u.version = u.version + 1,
+                    u.isActive = :isActive
+                WHERE u.number = :number AND u.isActive = :isActiveCurrent
+            """;
+        try {
+            var result = entityManagerProvider.getEntityManager().createQuery(hql)
+                .setParameter("number", number)
+                .setParameter("updatedAt", updatedAt)
+                .setParameter("isActive", Boolean.FALSE)
+                .setParameter("isActiveCurrent", Boolean.TRUE)
+                .executeUpdate();
+            if (result == 0) {
+                return Optional.empty();
+            } else {
+                return Optional.of(number);
+            }
+            // TODO: remove it
+        } catch (NoResultException ex) {
+            log.warn(LOG_MSG_UNIT_NOT_FOUND, number);
+            return Optional.empty();
+        }
     }
 
     @Override
