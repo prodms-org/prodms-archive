@@ -6,7 +6,7 @@ basic:
     repository: "ghcr.io/yuryklimchuk"
     tag: "prodms/archive-server"
     version: "1.0.0-SNAPSHOT"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   
   app:
     id: "archive"
