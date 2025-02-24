@@ -11,14 +11,16 @@ json_array='[
 ]';
 
 # URL, на который нужно отправлять данные
-url="http://localhost:8070/api/v1/units"
+url="http://archive-svc.prodms.svc:8080/api/v1/units"
 
 # Используем jq для итерации по массиву JSON
 echo "$json_array" | jq -c '.[]' | while read -r item; do
     # Отправляем POST-запрос с элементом в качестве тела
-    response=$(curl -s -X POST "$url" \
-        -H "Content-Type: application/json" \
-        -d "$item")
+#    response=$(curl -s -X POST "$url" \
+#        -H "Content-Type: application/json" \
+#        -d "$item")
+
+    response=$(wget --header "Content-Type: application/json" --post-data "$item" $url)
 
     echo "Ответ от сервера: $response"
 done
