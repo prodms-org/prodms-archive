@@ -8,6 +8,6 @@ on:
 
 jobs:
   reuse:
-    uses: YuryKlimchuk/prodms-workflows/.github/workflows/microservice-workflow-standard.yml@master
+    uses: prodms-org/prodms-workflows/.github/workflows/microservice-workflow-standard.yml@master
     secrets:
       TOKEN: ${{ secrets.TOKEN }}
