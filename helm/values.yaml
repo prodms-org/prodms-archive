@@ -24,3 +24,7 @@ db:
   user: pg-user
   name: archive
   entityRootPackage: root-pack-my
+
+microservices:
+  urls:
+    files: http://files-svc.prodms.svc:8080

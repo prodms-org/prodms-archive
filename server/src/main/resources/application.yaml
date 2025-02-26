@@ -1,6 +1,10 @@
 hibernate:
   enable_lazy_load: true
 
+microservices:
+  urls:
+    files: ${FILES_URL:http://localhost:8088}
+
 validation:
   enabled: true
   createUnit:

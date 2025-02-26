@@ -2,8 +2,10 @@ package com.hydroyura.prodms.archive.client.model.res;
 
 import com.hydroyura.prodms.archive.client.model.enums.UnitStatus;
 import com.hydroyura.prodms.archive.client.model.enums.UnitType;
+import com.hydroyura.prodms.files.server.api.enums.DrawingType;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Map;
 import lombok.Data;
 
 @Data
@@ -17,6 +19,7 @@ public class GetUnitRes {
     private Instant updatedAt;
     private String additional;
     private Collection<UnitHist> history;
+    private Map<DrawingType, String> drawings;
 
     @Data
     public static class UnitHist {

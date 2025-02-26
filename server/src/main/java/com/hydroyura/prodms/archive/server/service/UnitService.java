@@ -16,6 +16,7 @@ import com.hydroyura.prodms.archive.server.mapper.CreateUnitReqToUnitMapper;
 import com.hydroyura.prodms.archive.server.mapper.UnitToGetUnitResMapper;
 import com.hydroyura.prodms.archive.server.mapper.UnitToUnitHistMapper;
 import com.hydroyura.prodms.archive.server.mapper.UnitToUnitResMapper;
+import com.hydroyura.prodms.files.server.api.res.GetUrlsLatestRes;
 import jakarta.persistence.EntityTransaction;
 import java.time.Instant;
 import java.util.Collection;
@@ -37,6 +38,7 @@ public class UnitService {
     private final EntityManagerProvider entityManagerProvider;
     private final UnitToGetUnitResMapper unitToGetUnitResMapper;
     private final UnitToUnitResMapper unitToUnitResMapper;
+    private final ArchiveApi archiveApi;
 
 
     public ListUnitsRes list(ListUnitsReq req) {
@@ -112,7 +114,15 @@ public class UnitService {
     }
 
     public Optional<GetUnitRes> get(String number) {
-        return unitRepository.get(number).map(unitToGetUnitResMapper::toDestination);
+        return unitRepository
+            .get(number)
+            .map(unitToGetUnitResMapper::toDestination)
+            .map(res -> {
+                archiveApi.get(res.getNumber())
+                    .map(GetUrlsLatestRes::getDrawings)
+                    .ifPresent(res::setDrawings);
+                return res;
+            });
     }
 
     // TODO: refactoring it, need to remove optional.get()

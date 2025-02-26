@@ -8,3 +8,4 @@ data:
   DB_USER: {{ required "'db.user' parameter is required" .Values.db.user | quote }}
   DB_NAME: {{ required "'db.name' parameter is required" .Values.db.name | quote }}
   DB_ENTITY_ROOT_PACKAGE: {{ required "'db.entityRootPackage' parameter is required" .Values.db.entityRootPackage | quote }}
+  FILES_URL: {{ required "'microservices.urls.files' parameter is required" .Values.microservices.urls.files | quote }}

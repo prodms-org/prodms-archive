@@ -2,12 +2,12 @@
 
 # array with data
 json_array='[
-  {"number": "RR10029.11001", "name": "Body", "type": "PART", "status": "DESIGN"},
-  {"number": "RR10209.11002", "name": "Spool", "type": "PART", "status": "DESIGN"},
-  {"number": "RR10309.11003", "name": "Valve", "type": "PART", "status": "DESIGN"},
-  {"number": "OV.10049.56.44", "name": "Ring", "type": "VZK", "status": "TEST"},
-  {"number": "SCS.20309.56.10", "name": "Screw", "type": "VZK", "status": "TEST"},
-  {"number": "HEDX.532009.52.44", "name": "Hex", "type": "VZK", "status": "TEST"}
+  {"number": "RR129.11001", "name": "Body", "type": "PART", "status": "DESIGN"},
+  {"number": "RR109.11002", "name": "Spool", "type": "PART", "status": "DESIGN"},
+  {"number": "RR09.11003", "name": "Valve", "type": "PART", "status": "DESIGN"},
+  {"number": "OV.19.56.44", "name": "Ring", "type": "VZK", "status": "TEST"},
+  {"number": "SCS.09.56.10", "name": "Screw", "type": "VZK", "status": "TEST"},
+  {"number": "HEDX.009.52.44", "name": "Hex", "type": "VZK", "status": "TEST"}
 ]';
 
 # URL, на который нужно отправлять данные
